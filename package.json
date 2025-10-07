@@ -1,0 +1,25 @@
+{
+   "name": "rondon",
+   "version": "0.0.1",
+   "description": "Awesome project developed with TypeORM.",
+   "type": "commonjs",
+   "devDependencies": {
+      "@types/node": "^22.13.10",
+      "ts-node": "^10.9.2",
+      "typescript": "^5.8.2"
+   },
+   "dependencies": {
+      "reflect-metadata": "^0.2.2",
+      "typeorm": "0.3.27",
+      "mysql2": "^3.14.0"
+   },
+   "scripts": {
+      "build": "tsc",
+      "dev:server": "ts-node-dev src/server.ts",
+      "start": "node build/server.js",
+      "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
+      "migration:run": "ts-node-dev ./node_modules/typeorm/cli.js migration:run -d ./src/database/dataSource.ts",
+      "migration:revert": "ts-node-dev ./node_modules/typeorm/cli.js migration:revert -d ./src/database/dataSource.ts",
+      "migration:generate": "ts-node-dev ./node_modules/typeorm/cli.js migration:generate -d ./src/database/dataSource.ts"
+   }
+}
