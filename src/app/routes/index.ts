@@ -1,6 +1,8 @@
 import { Router } from "express";
+import loginRegisterUserRouter from "../controller/UserController/Auth";
 
+const routers = Router()
 
-const router = Router()
+routers.use('/user/auth', loginRegisterUserRouter)
 
-router.use('/auth')
+export default routers

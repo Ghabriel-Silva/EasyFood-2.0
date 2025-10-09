@@ -1,6 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
 
-export type UserRole = 'MASTER' | 'JUNIOR';
+export enum enunRole{
+    MASTER = 'master',
+    JUNIOR = 'junior',
+}
 
 @Entity()
 export class User {
@@ -14,22 +17,18 @@ export class User {
     @Column('varchar', { nullable: false, length: 200 })
     password: string
 
-    @Column('varchar', { length: 30, nullable: false })
+    @Column('varchar', { length: 100, nullable: false })
     name: string
 
+    @Column({
+        type: "enum",
+        enum: enunRole,
+        nullable: false
+    })
+    role: enunRole
 
     @Column('boolean', { nullable: false, default: true })
     isActive: boolean;
-
-    @Column({
-        type: 'enum',
-        enum: ['MASTER', 'JUNIOR'],
-        default: 'JUNIOR'
-    })
-    role: UserRole
-
-    @Column({nullable:true})
-    lastLoginAt?:Date
 
     @CreateDateColumn()
     created_at: Date

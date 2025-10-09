@@ -1,4 +1,5 @@
-import { UserRole } from "../../entity/User"
+import { enunRole} from "../../entity/User"
+
 
 interface ILogin {
     email: string,
@@ -9,9 +10,7 @@ interface IRegister {
     email: string,
     password: string,
     name: string,
-    isActive: Boolean,
-    role: UserRole,
-    lastLoginAt?: Date
+    role:enunRole,
 }
 
 export {ILogin, IRegister}

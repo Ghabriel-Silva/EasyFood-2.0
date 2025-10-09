@@ -17,12 +17,13 @@ const registerSchema = yup.object({
     password: yup
         .string()
         .required("O campo senha é obrigatório")
+        .min(6, 'A senha deve ter pelo menos 6 caracteres')
         .max(100, "O campo senha não pode ter mais de 100 caracteres"),
 
     role: yup
-    .string()
-    .required("O campo role é obrigatório")
-    .oneOf(["MASTER", "JUNIOR"], "Tipo de usuário inválido"),
+        .string()
+        .required("O campo role é obrigatório")
+        .oneOf(["MASTER", "JUNIOR"], "Tipo de usuário inválido"),
 })
 
 export default registerSchema
