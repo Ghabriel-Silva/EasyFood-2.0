@@ -1,8 +1,10 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { User } from "./entity/User"
+import { User } from "../app/entity/User"
 import dotenv from "dotenv"
 dotenv.config()
+
+import {CreateTableUsers1759942333373} from '../database/migrations/1759942333373-CreateTableUsers'
 
 
 
@@ -13,9 +15,9 @@ export const AppDataSource = new DataSource({
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    synchronize: true,
+    synchronize: false,
     logging: false,
     entities: [User],
-    migrations: [],
+    migrations: [CreateTableUsers1759942333373],
     subscribers: [],
 })
