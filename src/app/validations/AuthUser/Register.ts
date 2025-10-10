@@ -23,7 +23,7 @@ const registerSchema = yup.object({
     role: yup
         .string()
         .required("O campo role é obrigatório")
-        .oneOf(["MASTER", "JUNIOR"], "Tipo de usuário inválido"),
+        .oneOf(["MASTER", "JUNIOR", "master", "junior"], "Tipo de usuário inválido, opção [MASTER, JUNIOR, master, junior] "),
 })
 
 export default registerSchema

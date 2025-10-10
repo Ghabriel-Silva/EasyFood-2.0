@@ -8,11 +8,11 @@ import routers from "./app/routes"
 
 const app = express()
 app.use(express.json())
-
 app.use(cors())
 
-app.use(httpErrorMiddleware)
 app.use(routers)
+
+app.use(httpErrorMiddleware)
 
 AppDataSource.initialize().then(()=>{
     console.log('data base Started!')

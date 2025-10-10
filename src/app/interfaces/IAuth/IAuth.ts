@@ -1,4 +1,4 @@
-import { enunRole} from "../../entity/User"
+import { enunRole } from "../../entity/User"
 
 
 interface ILogin {
@@ -10,7 +10,10 @@ interface IRegister {
     email: string,
     password: string,
     name: string,
-    role:enunRole,
+    role: enunRole,
 }
 
-export {ILogin, IRegister}
+
+
+
+export { ILogin, IRegister }
