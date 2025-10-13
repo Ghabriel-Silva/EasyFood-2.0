@@ -14,7 +14,6 @@ export class UserAuthService {
     }
 
     register = async (register: IRegister) => {
-
         try {
             await registerSchema.validate(register, { abortEarly: false })
         } catch (err) {
