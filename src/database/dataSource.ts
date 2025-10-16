@@ -7,6 +7,8 @@ dotenv.config()
 import {CreateTableUsers1759942333373} from '../database/migrations/1759942333373-CreateTableUsers'
 import {AddColumnsToUser1760008784582} from '../database/migrations/1760008784582-AddColumnsToUser'
 import {EditeTableUser1760051817279} from '../database/migrations/1760051817279-EditeTableUser'
+import {AddBirthdayToUser1760569248113} from '../database/migrations/1760569248113-AddBirthdayToUser'
+
 
 
 
@@ -23,7 +25,9 @@ export const AppDataSource = new DataSource({
     migrations: [
         CreateTableUsers1759942333373,
         AddColumnsToUser1760008784582, 
-        EditeTableUser1760051817279
+        EditeTableUser1760051817279, 
+        AddBirthdayToUser1760569248113
+        
     ],
     subscribers: [],
 })

@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
 
-export enum enunRole{
-    MASTER = 'master',
-    JUNIOR = 'junior',
+export enum enunRole {
+    ADMIN = 'admin',
+    USER = 'user',
 }
 
 @Entity()
@@ -23,12 +23,17 @@ export class User {
     @Column({
         type: "enum",
         enum: enunRole,
+        default: enunRole.USER,
         nullable: false
     })
     role: enunRole
 
     @Column('boolean', { nullable: false, default: true })
     isActive: boolean;
+
+    @Column({ type: "date", nullable: true })
+    birthday?: Date
+
 
     @CreateDateColumn()
     created_at: Date

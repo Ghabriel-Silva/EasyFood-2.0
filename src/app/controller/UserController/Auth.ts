@@ -1,14 +1,16 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { UserAuthService } from "../../service/UserService/Auth";
+import { IRegister } from "../../interfaces/IAuth/IAuth";
+import { SuccessResponse } from "../../utils/SuccessResponse";
 
 class AuthUser {
     public router: Router
-    private userAuthService:UserAuthService
+    private userAuthService: UserAuthService
 
     constructor() {
         this.router = Router(),
-        this.userAuthService = new UserAuthService(),
-        this.inicializeRoutes()
+            this.userAuthService = new UserAuthService(),
+            this.inicializeRoutes()
 
     }
 
@@ -18,10 +20,16 @@ class AuthUser {
     }
 
 
-    private  registerUser = async (req: Request, res: Response, next: NextFunction): Promise<void>=>  {
+    private registerUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const result = await this.userAuthService.register(req.body)
-            res.status(201).json(result)
+            const user = await this.userAuthService.register(req.body)
+            const { password, ...safeUser } = user
+
+            res.status(201).json(
+                SuccessResponse(safeUser, undefined, "create", "Usuario")
+            )
+
+
         } catch (error) {
             next(error)
         }
