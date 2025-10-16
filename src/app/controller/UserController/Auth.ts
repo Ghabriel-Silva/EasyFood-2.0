@@ -42,8 +42,6 @@ class AuthUser {
                     SuccessResponse(null, "Usuario logado")
                 )
             }
-
-
         }catch(error){
             next(error)
         }
