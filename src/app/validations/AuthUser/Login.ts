@@ -13,3 +13,4 @@ const LoginSchema = yup.object({
     .min(6, 'A senha deve ter pelo menos 6 caracteres')
     .max(50, 'A senha não pode ter mais de 50 caracteres')
 })
+export default LoginSchema

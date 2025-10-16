@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../../database/dataSource";
 import { User } from "../../entity/User";
-import { IRegister } from "../../interfaces/IAuth/IAuth";
+import { IRegister, IUser } from "../../interfaces/IAuth/IAuth";
 
 export class UserRepository {
     private repo: Repository<User>
@@ -10,7 +10,7 @@ export class UserRepository {
         this.repo = AppDataSource.getRepository(User)
     }
 
-    async findByEmail(email: string) {
+    async findByEmail(email: string):Promise<IUser | null> {
         return await this.repo.findOne({ where: { email } })
     }
     

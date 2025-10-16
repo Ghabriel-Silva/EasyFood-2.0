@@ -10,11 +10,12 @@ interface IRegister {
     email: string,
     password: string,
     name: string,
-    birthday:Date
+    birthday?:Date
 }
 
-export interface IUser extends IRegister {
+ interface IUser extends IRegister {
     id: string
+    role:string
     isActive: boolean
     created_at: Date
     updated_at: Date
@@ -22,4 +23,4 @@ export interface IUser extends IRegister {
 
 
 
-export { ILogin, IRegister }
+export { ILogin, IRegister, IUser }

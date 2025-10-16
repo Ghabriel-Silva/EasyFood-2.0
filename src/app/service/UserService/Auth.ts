@@ -1,11 +1,10 @@
-import { IRegister, IUser } from "../../interfaces/IAuth/IAuth";
+import { ILogin, IRegister, IUser } from "../../interfaces/IAuth/IAuth";
 import { UserRepository } from "../../repository/UserRepository/Auth";
 import ErrorExtension from "../../utils/ErrorExtension";
 import registerSchema from "../../validations/AuthUser/Register";
 import * as yup from "yup";
 import bcrypt from "bcrypt";
-import { enunRole } from "../../entity/User";
-
+import LoginSchema from "../../validations/AuthUser/Login";
 
 export class UserAuthService {
     private userRepository: UserRepository
@@ -31,7 +30,7 @@ export class UserAuthService {
         const hashPassword: string = await bcrypt.hash(validatedRegister.password, 10);
         validatedRegister.password = hashPassword;
 
-        const validEmail = await this.userRepository.findByEmail(validatedRegister.email);
+        const validEmail: IUser | null = await this.userRepository.findByEmail(validatedRegister.email);
         if (validEmail) {
             throw new ErrorExtension(401, 'Email já cadastrado!');
         }
@@ -43,6 +42,38 @@ export class UserAuthService {
         }
 
         return registrandoUser;
+    }
+
+    login = async (login: ILogin) => {
+        let validateLogin
+        try {
+
+            validateLogin = await LoginSchema.validate(login, {
+                abortEarly: false,
+                stripUnknown: true
+            })
+        } catch (err) {
+            if (err instanceof yup.ValidationError) {
+                throw new ErrorExtension(401, err.errors.join(","))
+            }
+        }
+
+        const userExist: IUser | null = await this.userRepository.findByEmail(login.email)
+
+        if (!userExist) {
+            throw new ErrorExtension(404, "Email ou senha incorreto")
+        }
+
+        const password: boolean = await bcrypt.compare(login.password, userExist.password)
+
+        if (!password) {
+            throw new ErrorExtension(404, "Email ou senha incorreto")
+        }
+
+        if(userExist && password ){
+            return true
+        }
+
     }
 
 }

@@ -15,7 +15,7 @@ class AuthUser {
     }
 
     private inicializeRoutes() {
-        this.router.post('/login')
+        this.router.post('/login', this.loginUser.bind(this))
         this.router.post('/register', this.registerUser.bind(this))
     }
 
@@ -29,8 +29,22 @@ class AuthUser {
                 SuccessResponse(safeUser, undefined, "create", "Usuario")
             )
 
-
         } catch (error) {
+            next(error)
+        }
+    }
+
+    private loginUser = async(req:Request, res:Response, next:NextFunction):Promise<void>=>{
+        try{
+            const user = await this.userAuthService.login(req.body)
+            if(user){
+                res.status(201).json(
+                    SuccessResponse(null, "Usuario logado")
+                )
+            }
+
+
+        }catch(error){
             next(error)
         }
     }
