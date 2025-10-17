@@ -1,6 +1,6 @@
 import Jwt, { SignOptions } from "jsonwebtoken"
 import dotenv from "dotenv"
-import { ITokenData } from "../interfaces/IAuth/IAuth"
+import { myJwtPayload } from "../interfaces/IAuth/IAuth"
 import ErrorExtension from "./ErrorExtension"
 
 
@@ -17,16 +17,16 @@ class Auth {
         }
     }
 
-    public jwtGenerator(payload: ITokenData) {
+    public jwtGenerator(payload: myJwtPayload) {
         return Jwt.sign(payload, SECRET, this.jwtConfig)
     }
 
-    public AuthenticateToken(token: string) {
+    public AuthenticateToken(token: string):myJwtPayload {
         if (!token) {
             throw new ErrorExtension(401, "Token não encontrado!")
         }
         try {
-            const validateJwt = Jwt.verify(token, SECRET)
+            const validateJwt:myJwtPayload  = Jwt.verify(token, SECRET) as myJwtPayload
             return validateJwt
         } catch (err) {
             throw new ErrorExtension(401, "Token não encontrado!")
@@ -34,3 +34,5 @@ class Auth {
 
     }
 }
+
+export default Auth

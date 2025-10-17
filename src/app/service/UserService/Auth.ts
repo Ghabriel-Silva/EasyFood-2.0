@@ -1,16 +1,19 @@
-import { ILogin, IRegister, IUser } from "../../interfaces/IAuth/IAuth";
+import { ILogin, IRegister, IUser, myJwtPayload } from "../../interfaces/IAuth/IAuth";
 import { UserRepository } from "../../repository/UserRepository/Auth";
 import ErrorExtension from "../../utils/ErrorExtension";
 import registerSchema from "../../validations/AuthUser/Register";
 import * as yup from "yup";
 import bcrypt from "bcrypt";
 import LoginSchema from "../../validations/AuthUser/Login";
+import Auth from "../../utils/Auth";
 
 export class UserAuthService {
     private userRepository: UserRepository
+    private authToken: Auth
 
     constructor() {
         this.userRepository = new UserRepository()
+        this.authToken = new Auth()
     }
 
     register = async (register: IRegister): Promise<IRegister> => {
@@ -44,10 +47,9 @@ export class UserAuthService {
         return registrandoUser;
     }
 
-    login = async (login: ILogin) => {
+    login = async (login: ILogin): Promise<{ token: string; user:Pick<IUser, "id" | "name" | "email" | "role"> }> => {
         let validateLogin
         try {
-
             validateLogin = await LoginSchema.validate(login, {
                 abortEarly: false,
                 stripUnknown: true
@@ -58,20 +60,33 @@ export class UserAuthService {
             }
         }
 
-        const userExist: IUser | null = await this.userRepository.findByEmail(login.email)
+        const user: IUser | null = await this.userRepository.findByEmail(login.email)
 
-        if (!userExist) {
-            throw new ErrorExtension(404, "Email ou senha incorreto")
+        if (!user) {
+            throw new ErrorExtension(401, "Email ou senha incorreto")
         }
 
-        const password: boolean = await bcrypt.compare(login.password, userExist.password)
+        const isPasswordValid: boolean = await bcrypt.compare(login.password, user.password)
 
-        if (!password) {
-            throw new ErrorExtension(404, "Email ou senha incorreto")
+        if (!isPasswordValid) {
+            throw new ErrorExtension(401, "Email ou senha incorreto")
+        }
+        const payload: myJwtPayload = {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            isActive: user.isActive
         }
 
-        if(userExist && password ){
-            return true
+        const jwtToken: string = this.authToken.jwtGenerator(payload)
+        return {
+            token: jwtToken,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         }
 
     }

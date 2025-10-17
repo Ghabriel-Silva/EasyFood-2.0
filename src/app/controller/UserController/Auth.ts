@@ -1,7 +1,9 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { UserAuthService } from "../../service/UserService/Auth";
-import { IRegister } from "../../interfaces/IAuth/IAuth";
+import { ILoginResponse, IRegister } from "../../interfaces/IAuth/IAuth";
 import { SuccessResponse } from "../../utils/SuccessResponse";
+import httpErrorMiddleware from "../../middlewares/ErrorMiddleware";
+import AuthenticateMidlleware from "../../middlewares/AuthMidlleware";
 
 class AuthUser {
     public router: Router
@@ -17,6 +19,7 @@ class AuthUser {
     private inicializeRoutes() {
         this.router.post('/login', this.loginUser.bind(this))
         this.router.post('/register', this.registerUser.bind(this))
+        this.router.get('/info', AuthenticateMidlleware,  this.infoUser.bind(this))
     }
 
 
@@ -34,16 +37,29 @@ class AuthUser {
         }
     }
 
-    private loginUser = async(req:Request, res:Response, next:NextFunction):Promise<void>=>{
-        try{
-            const user = await this.userAuthService.login(req.body)
-            if(user){
+    private loginUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const data = await this.userAuthService.login(req.body)
+            if (data) {
                 res.status(201).json(
-                    SuccessResponse(null, "Usuario logado")
+                    SuccessResponse<ILoginResponse>(
+                        data,
+                        `Bem vindo ${data.user.name}`
+                    )
                 )
             }
-        }catch(error){
+        } catch (error) {
             next(error)
+        }
+    }
+
+    private infoUser = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+        try {
+            res.status(200).json(
+                "oi"
+            )
+        } catch(erro) {
+            next(erro)
         }
     }
 

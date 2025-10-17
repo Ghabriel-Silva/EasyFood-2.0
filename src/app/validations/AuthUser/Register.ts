@@ -22,7 +22,6 @@ const registerSchema = yup.object({
 
     birthday: yup
         .date()
-        .required("O campo data de nascimento é obrigatório")
         .max(new Date(), "A data de nascimento não pode ser no futuro")
 
 })
