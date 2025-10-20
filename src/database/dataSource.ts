@@ -1,13 +1,14 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { User } from "../app/entity/User"
+import { Company } from "../app/entity/Company"
+import { Category } from "../app/entity/Category"
+import { Order } from "../app/entity/Order"
+import { OrderItem } from "../app/entity/OrderItem"
+import { Products } from "../app/entity/Products"
 import dotenv from "dotenv"
 dotenv.config()
 
-import {CreateTableUsers1759942333373} from '../database/migrations/1759942333373-CreateTableUsers'
-import {AddColumnsToUser1760008784582} from '../database/migrations/1760008784582-AddColumnsToUser'
-import {EditeTableUser1760051817279} from '../database/migrations/1760051817279-EditeTableUser'
-import {AddBirthdayToUser1760569248113} from '../database/migrations/1760569248113-AddBirthdayToUser'
+import { GenerateAllTables1760965347778 } from '../database/migrations/1760965347778-GenerateAllTables'
 
 
 
@@ -21,13 +22,11 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_NAME,
     synchronize: false,
     logging: false,
-    entities: [User],
+    entities: [Company, Category, Products, Order, OrderItem],
     migrations: [
-        CreateTableUsers1759942333373,
-        AddColumnsToUser1760008784582, 
-        EditeTableUser1760051817279, 
-        AddBirthdayToUser1760569248113
-        
+
+        GenerateAllTables1760965347778
+
     ],
     subscribers: [],
 })

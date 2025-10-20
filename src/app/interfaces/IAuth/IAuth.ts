@@ -11,7 +11,6 @@ interface IRegister {
     email: string,
     password: string,
     name: string,
-    birthday?: Date
 }
 
 interface IUser extends IRegister {

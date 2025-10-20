@@ -1,9 +1,10 @@
 import { Router } from "express";
 import userRouter from "../controller/UserController/Auth";
+import adminRouter from "../controller/AdminController/Admin";
 
 const routers = Router()
 
-routers.use('/user', userRouter)
-routers.use('/admin', userRouter)
+routers.use('/company', userRouter)
+routers.use('/admin', adminRouter)
 
 export default routers

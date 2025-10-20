@@ -18,11 +18,7 @@ const registerSchema = yup.object({
         .string()
         .required("O campo senha é obrigatório")
         .min(6, 'A senha deve ter pelo menos 6 caracteres')
-        .max(100, "O campo senha não pode ter mais de 100 caracteres"),
-
-    birthday: yup
-        .date()
-        .max(new Date(), "A data de nascimento não pode ser no futuro")
+        .max(100, "O campo senha não pode ter mais de 100 caracteres")
 
 })
     .noUnknown(true, "Campos não permitidos foram enviados.");
