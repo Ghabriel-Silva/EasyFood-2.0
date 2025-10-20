@@ -1,6 +1,6 @@
 import { Company } from "../../entity/Company";
 import { IRegister } from "../../interfaces/IAuth/IAuth";
-import { UserRepository } from "../UserRepository/Auth";
+import { UserRepository } from "../Company/CompanyAuthRepository";
 
 export class AdminRepository extends UserRepository {
     constructor(){

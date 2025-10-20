@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { UserAuthService } from "../../service/UserService/Auth";
+import { UserAuthService } from "../../service/company/CompanyAuthService";
 import { ILoginResponse, IRegister } from "../../interfaces/IAuth/IAuth";
 import { SuccessResponse } from "../../utils/SuccessResponse";
 import AuthenticateMidlleware from "../../middlewares/AuthMidlleware";

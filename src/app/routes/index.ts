@@ -1,6 +1,6 @@
 import { Router } from "express";
-import userRouter from "../controller/UserController/Auth";
-import adminRouter from "../controller/AdminController/Admin";
+import userRouter from "../controller/Company/CompanyAuthController";
+import adminRouter from "../controller/Admin/AdminControler";
 
 const routers = Router()
 

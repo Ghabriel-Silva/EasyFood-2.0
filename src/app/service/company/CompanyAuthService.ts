@@ -1,9 +1,9 @@
 import { ILogin, IUser, myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { UserRepository } from "../../repository/UserRepository/Auth";
+import { UserRepository } from "../../repository/Company/CompanyAuthRepository";
 import ErrorExtension from "../../utils/ErrorExtension";
 import * as yup from "yup";
 import bcrypt from "bcrypt";
-import LoginSchema from "../../validations/AuthUser/Login";
+import LoginSchema from "../../validations/Company/Login";
 import Auth from "../../utils/Auth";
 
 export class UserAuthService {

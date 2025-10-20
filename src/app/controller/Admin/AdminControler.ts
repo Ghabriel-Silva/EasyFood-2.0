@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { SuccessResponse } from "../../utils/SuccessResponse";
-import { AdminService } from "../../service/AdminService/Admin";
+import { AdminService } from "../../service/Admin/AdminService";
 
 
 class Admin {
