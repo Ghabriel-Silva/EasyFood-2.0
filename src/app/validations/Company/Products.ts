@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-const productSchema = yup.object({
+export const productSchema = yup.object({
   name: yup.string().required('O nome do produto é obrigatório'),
   price: yup
     .number()
@@ -16,3 +16,5 @@ const productSchema = yup.object({
   description: yup.string().notRequired(),
   categoryId: yup.string().notRequired(),
 });
+
+export type ProductSchema = yup.InferType<typeof productSchema>

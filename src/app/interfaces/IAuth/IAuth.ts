@@ -3,8 +3,8 @@ import { JwtPayload } from "jsonwebtoken"
 
 
 interface ILogin {
-    email: string,
-    password: string
+    email: string;
+    password: string;
 }
 
 interface IRegister {
@@ -14,23 +14,23 @@ interface IRegister {
 }
 
 interface IUser extends IRegister {
-    id: string
-    role: string
-    isActive: boolean
-    created_at: Date
-    updated_at: Date
+    id: string;
+    role: string;
+    isActive: boolean;
+    created_at: Date;
+    updated_at: Date;
 }
 
 interface myJwtPayload extends JwtPayload {
-    id: string
-    email: string
-    role: string
-    isActive: boolean
+    id: string;
+    email: string;
+    role: string;
+    isActive: boolean;
 }
 
 interface ILoginResponse {
     token: string;
-    user: Pick<IUser, "id" | "name" | "email" | "role">
+    user: Pick<IUser, "id" | "name" | "email" | "role">;
 }
 
 export { ILogin, IRegister, IUser, myJwtPayload, ILoginResponse }

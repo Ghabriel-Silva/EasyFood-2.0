@@ -1,16 +1,22 @@
 import { Response, Request, NextFunction, Router } from "express";
+import AuthenticateMidlleware from "../../middlewares/AuthMidlleware";
+import ProductService from "../../service/company/ProductService";
+import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
+import { SuccessResponse } from "../../utils/SuccessResponse";
 
 
 class ProductController {
     public router:Router
-    //Private ProductService
+    private productService: ProductService
 
     constructor(){
         this.router = Router()
+        this.incializeRoutes()
+        this.productService = new ProductService()
     }
 
     private incializeRoutes(){
-        this.router.post('/create', this.createProduct.bind(this))
+        this.router.post('/create', AuthenticateMidlleware, this.createProduct.bind(this))
         this.router.post('/update', this.updateProduct.bind(this))
         this.router.post('/list', this.listProduct.bind(this))
         this.router.post('/inactivate', this.inactivateProduct.bind(this))
@@ -18,7 +24,12 @@ class ProductController {
 
    private createProduct = async (req:Request, res:Response, next:NextFunction):Promise<void>=>{
         try{
-            
+            const payloud:myJwtPayload  = req.user as myJwtPayload
+            const result = await this.productService.createProduct(req.body, payloud)
+
+            res.status(200).json(
+                SuccessResponse(result, undefined, "create", "Produto")
+            )
         }catch(err){
             next(err)
         }
@@ -45,3 +56,6 @@ class ProductController {
         }
     }
 }
+
+const productsRoutes = new ProductController().router
+export default productsRoutes
