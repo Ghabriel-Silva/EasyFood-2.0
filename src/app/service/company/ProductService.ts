@@ -39,6 +39,9 @@ class ProductService {
             throw err
         }
     }
+
+
+
     updateProduct = async (id: string, payloudCompany: myJwtPayload, update: IProductUpdate) => {
         try {
             const validateProductUpdate: ProductUpdateSchema = await productUpdateSchema.validate(update, {
@@ -82,14 +85,13 @@ class ProductService {
 
             const productUpdate = await this.productRepository.updateProduct(id, payloudCompany, fieldsToUpdate)
 
-
-
             if (!productUpdate) {
-                throw new ErrorExtension(400, "Nenhuma encontrada")
+                throw new ErrorExtension(400, "Erro Ao atulizar produto")
             }
             const productOutput: IProductOutput = mapProductToOutput(productUpdate)
 
             return productOutput
+
         } catch (err) {
             if (err instanceof yup.ValidationError) {
                 throw new ErrorExtension(401, err.errors.join(","))
@@ -103,7 +105,7 @@ class ProductService {
 
     }
     inactivateProduct = async () => {
-
+        
     }
 }
 
