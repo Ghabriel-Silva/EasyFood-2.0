@@ -15,7 +15,7 @@ export class UserAuthService {
         this.authToken = new Auth()
     }
 
-    login = async (login: ILogin): Promise<{ token: string; user:Pick<IUser, "id" | "name" | "email" | "role"> }> => {
+    login = async (login: ILogin): Promise<{ token: string; user: Pick<IUser, "id" | "name" | "email" | "role"> }> => {
         let validateLogin
         try {
             validateLogin = await LoginSchema.validate(login, {
@@ -27,14 +27,17 @@ export class UserAuthService {
                 throw new ErrorExtension(401, err.errors.join(","))
             }
         }
+        if (!validateLogin) {
+            throw new ErrorExtension(401, "Dados inválidos");
+        }
 
-        const user: IUser | null = await this.userRepository.findByEmail(login.email)
+        const user: IUser | null = await this.userRepository.findByEmail(validateLogin.email)
 
         if (!user) {
             throw new ErrorExtension(401, "Email ou senha incorreto")
         }
 
-        const isPasswordValid: boolean = await bcrypt.compare(login.password, user.password)
+        const isPasswordValid: boolean = await bcrypt.compare(validateLogin.password, user.password)
 
         if (!isPasswordValid) {
             throw new ErrorExtension(401, "Email ou senha incorreto")

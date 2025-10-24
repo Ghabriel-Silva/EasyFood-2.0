@@ -1,21 +1,21 @@
-
 export interface IProduct {
     name: string;
     price: number;
-    quantity?: number;
-    expirationDate?: Date;
-    description?: string;
-    category_id: String;
+    quantity?: number | null;
+    expirationDate?: Date | null;
+    description?: string | null;
+    category_id: string ;
 }
+
 
 export interface IProductOutput {
     id: string;
     name: string;
     price: number;
-    quantity?: number;
+    quantity?: number | null;
     expirationDate?: Date | null;
     isAvailable: boolean;
-    description?: string;
+    description?: string | null;
     created_at: Date;
     updated_at: Date;
     company: {
@@ -25,5 +25,14 @@ export interface IProductOutput {
     category: {
         id: string;
         name: string;
-    } | null; 
+    } | null;
+}
+
+export interface IProductUpdate {
+    name?: string;
+    price?: number;
+    quantity?: number | null;
+    expirationDate?: Date | null;
+    description?: string | null;
+    category_id?: string ;
 }

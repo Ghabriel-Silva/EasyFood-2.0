@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToMany } from "typeorm";
-import {Category} from "./Category";
+import { Category } from "./Category";
 import { OrderItem } from "./OrderItem";
 import { Company } from "./Company";
 
@@ -15,7 +15,7 @@ export class Products {
     price: number;
 
     @Column("int", { nullable: true })
-    quantity: number;
+    quantity: number | null;
 
     @Column({ type: "date", nullable: true })
     expirationDate?: Date;
@@ -25,6 +25,9 @@ export class Products {
 
     @Column({ nullable: true })
     description?: string;
+
+    @Column({ nullable: true })
+    category_id: string;
 
     @ManyToOne(() => Company, company => company.products)
     @JoinColumn({ name: "company_id" })

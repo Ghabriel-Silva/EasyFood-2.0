@@ -2,7 +2,9 @@ import { Repository } from "typeorm";
 import { Products } from "../../entity/Products";
 import { AppDataSource } from "../../../database/dataSource";
 import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { IProduct, IProductOutput } from "../../interfaces/IProduct/IProduct";
+import { IProduct, IProductOutput, IProductUpdate } from "../../interfaces/IProduct/IProduct";
+import { ProductUpdateSchema } from "../../validations/Company/Product/Update";
+import { object } from "yup";
 
 
 export class ProductRepository {
@@ -14,12 +16,17 @@ export class ProductRepository {
 
 
 
-    async createProduct(payloud: myJwtPayload, data: IProduct): Promise<Products | null> {
+    async createProduct(user: myJwtPayload, data: IProduct): Promise<Products | null> {
         const newProduct = this.productRepository.create({
-            ...data,
-            company: { id: String(payloud.id) },
-            category: { id: String(data.category_id) }
-        })
+            name: data.name,
+            price: data.price,
+            quantity: data.quantity ?? undefined,
+            expirationDate: data.expirationDate ?? undefined,
+            description: data.description ?? undefined,
+            isAvailable: true,
+            company: { id: user.id },
+            category: data.category_id ? { id: data.category_id } : undefined,
+        }) //?? undefined garante que, se o valor for null ou undefined, o campo será omitido, que é exatamente o que o TypeORM espera
 
         await this.productRepository.save(newProduct)
 
@@ -30,9 +37,39 @@ export class ProductRepository {
 
         return productWithRelations
     }
-    async updateProduct() {
 
+
+    async updateProduct(id: string, company: myJwtPayload, update:any): Promise<Products | null> {
+
+        const updateData = await this.productRepository
+            .createQueryBuilder()
+            .update(Products)
+            .set(update)
+            .where("id = :id", { id })
+            .andWhere("company_id = :company_id", { company_id: company.id })
+            .execute();
+
+        if (updateData.affected === 0) return null
+
+
+        const productWithRelations = await this.productRepository.findOne({
+            where: {
+                id: id,
+                company: {
+                    id: company.id
+                }
+            },
+            relations: ['company', 'category']
+        })
+        return productWithRelations
     }
+
+    //Pega o produto pelo id dele
+    async findByid(id: string): Promise<Products | null> {
+        return await this.productRepository.findOneBy({ id })
+    }
+
+
     async listProduct() {
 
     }
