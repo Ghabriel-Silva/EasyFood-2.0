@@ -39,7 +39,7 @@ export class ProductRepository {
     }
 
 
-    async updateProduct(id: string, company: myJwtPayload, update:any): Promise<Products | null> {
+    async updateProduct(id: string, company: myJwtPayload, update: any): Promise<Products | null> {
 
         const updateData = await this.productRepository
             .createQueryBuilder()
@@ -64,9 +64,15 @@ export class ProductRepository {
         return productWithRelations
     }
 
-    //Pega o produto pelo id dele
-    async findByid(id: string): Promise<Products | null> {
-        return await this.productRepository.findOneBy({ id })
+    //Pega o produto pelo id dele e verifica se esta vinculado ao usuario payloud 
+    async findByid(id: string, company: myJwtPayload): Promise<Products | null> {
+        return await this.productRepository.findOne({
+            where: {
+                id,
+                company: { id: company.id } 
+            },
+            relations: ["company", "category"] 
+        });
     }
 
 

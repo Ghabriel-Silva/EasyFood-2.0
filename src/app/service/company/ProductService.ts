@@ -49,11 +49,13 @@ class ProductService {
                 throw new ErrorExtension(401, "Id do produto invalido")
             }
 
-            const infoProducts: Products | null = await this.productRepository.findByid(id)
+            const infoProducts: Products | null = await this.productRepository.findByid(id, payloudCompany)
+
+            if (!infoProducts) throw new ErrorExtension(404, 'Você não tem permissão para acessar este produto');
 
             const fieldsToUpdate: any = {};
 
-            for (const [chave, value] of Object.entries(update)) {
+            for (const [chave, value] of Object.entries(validateProductUpdate)) {
                 if (value === undefined) continue;
 
                 let currentValue = (infoProducts as any)[chave];
@@ -86,7 +88,7 @@ class ProductService {
                 throw new ErrorExtension(400, "Nenhuma encontrada")
             }
             const productOutput: IProductOutput = mapProductToOutput(productUpdate)
-            
+
             return productOutput
         } catch (err) {
             if (err instanceof yup.ValidationError) {
