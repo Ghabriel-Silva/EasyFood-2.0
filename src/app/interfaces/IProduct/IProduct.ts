@@ -36,3 +36,8 @@ export interface IProductUpdate {
     description?: string | null;
     category_id?: string ;
 }
+
+export interface IProductStatus {
+    id:string;
+    isAvailable: boolean;
+} 

@@ -2,7 +2,7 @@ import { Repository } from "typeorm";
 import { Products } from "../../entity/Products";
 import { AppDataSource } from "../../../database/dataSource";
 import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { IProduct, IProductOutput, IProductUpdate } from "../../interfaces/IProduct/IProduct";
+import { IProduct, IProductOutput, IProductStatus, IProductUpdate } from "../../interfaces/IProduct/IProduct";
 import { ProductUpdateSchema } from "../../validations/Company/Product/Update";
 import { object } from "yup";
 
@@ -40,7 +40,7 @@ export class ProductRepository {
 
 
     async updateProduct(id: string, company: myJwtPayload, update: any): Promise<Products | null> {
-        
+
         const updateData = await this.productRepository
             .createQueryBuilder()
             .update(Products)
@@ -81,7 +81,33 @@ export class ProductRepository {
     async listProduct() {
 
     }
-    async inactivateProduct() {
+    async inactivateProduct(id: string, company: myJwtPayload):Promise<IProductStatus| null> {
+        const updateStatus = await this.productRepository
+            .createQueryBuilder()
+            .update(Products)
+            .set({ isAvailable: false })
+            .where("id = :id", { id })
+            .andWhere("company_id = :company_id", { company_id: company.id })
+            .execute()
+
+        if (updateStatus.affected === 0) return null
+
+        return { id, isAvailable: false }
+
+
+    }
+    async activeProduct(id: string, company: myJwtPayload):Promise<IProductStatus| null>{
+        const updateStatus = await this.productRepository
+            .createQueryBuilder()
+            .update(Products)
+            .set({ isAvailable: true })
+            .where("id = :id", { id })
+            .andWhere("company_id = :company_id", { company_id: company.id })
+            .execute()
+
+        if (updateStatus.affected === 0) return null
+
+        return { id, isAvailable: true }
 
     }
 

@@ -1,4 +1,4 @@
-import { IProduct, IProductOutput, IProductUpdate } from "../../interfaces/IProduct/IProduct";
+import { IProduct, IProductOutput, IProductStatus, IProductUpdate } from "../../interfaces/IProduct/IProduct";
 import { ProductRepository } from "../../repository/Company/ProductRepository";
 import * as yup from "yup";
 import ErrorExtension from "../../utils/ErrorExtension";
@@ -17,7 +17,7 @@ class ProductService {
         this.productRepository = new ProductRepository()
     }
 
-    createProduct = async (data: IProduct, user: myJwtPayload) => {
+    createProduct = async (data: IProduct, user: myJwtPayload): Promise<IProductOutput> => {
         try {
             const validateProduct: ProductSchema = await productCreateSchema.validate(data, {
                 abortEarly: false
@@ -42,7 +42,7 @@ class ProductService {
 
 
 
-    updateProduct = async (id: string, payloudCompany: myJwtPayload, update: IProductUpdate) => {
+    updateProduct = async (id: string, payloudCompany: myJwtPayload, update: IProductUpdate): Promise<IProductOutput> => {
         try {
             const validateProductUpdate: ProductUpdateSchema = await productUpdateSchema.validate(update, {
                 abortEarly: false
@@ -54,7 +54,7 @@ class ProductService {
 
             const infoProducts: Products | null = await this.productRepository.findByid(id, payloudCompany)
 
-            if (!infoProducts) throw new ErrorExtension(404, 'Você não tem permissão para acessar este produto');
+            if (!infoProducts) throw new ErrorExtension(404, 'Você não tem permissão para alterar este produto');
 
             const fieldsToUpdate: any = {};
 
@@ -101,11 +101,35 @@ class ProductService {
     }
 
 
+    inactivateProduct = async (id: string, payloudCompany: myJwtPayload):Promise<IProductStatus| null> => {
+        if (!id) throw new ErrorExtension(401, 'Id auxente, por favor tente novamente')
+
+
+        const inactivate:IProductStatus | null = await this.productRepository.inactivateProduct(id, payloudCompany)
+
+        if (!inactivate) {
+            throw new ErrorExtension(404, 'Você não tem permissão para alterar este produto')
+        }
+
+        return inactivate
+    }
+
+
+    activeProducts = async (id: string, payloudCompany: myJwtPayload):Promise<IProductStatus| null> => {
+        if (!id) throw new ErrorExtension(401, 'Id auxente, por favor tente novamente')
+
+
+        const inactivate:IProductStatus | null  = await this.productRepository.activeProduct(id, payloudCompany)
+
+        if (!inactivate) {
+            throw new ErrorExtension(404, 'Você não tem permissão para alterar este produto')
+        }
+
+        return inactivate
+    }
+
     listProduct = async () => {
 
-    }
-    inactivateProduct = async () => {
-        
     }
 }
 
