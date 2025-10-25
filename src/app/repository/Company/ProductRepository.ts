@@ -2,9 +2,8 @@ import { Repository } from "typeorm";
 import { Products } from "../../entity/Products";
 import { AppDataSource } from "../../../database/dataSource";
 import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { IProduct, IProductOutput, IProductStatus, IProductUpdate } from "../../interfaces/IProduct/IProduct";
-import { ProductUpdateSchema } from "../../validations/Company/Product/Update";
-import { object } from "yup";
+import { IProduct, IProductStatus } from "../../interfaces/IProduct/IProduct";
+import { listSchema } from "../../validations/Company/Product/List";
 
 
 export class ProductRepository {
@@ -77,38 +76,30 @@ export class ProductRepository {
         });
     }
 
-
-    async listProduct() {
-
-    }
-    async inactivateProduct(id: string, company: myJwtPayload):Promise<IProductStatus| null> {
+    async setStatusProduct(id: string, company: myJwtPayload, setStatus: boolean): Promise<IProductStatus | null> {
         const updateStatus = await this.productRepository
             .createQueryBuilder()
             .update(Products)
-            .set({ isAvailable: false })
+            .set({ isAvailable: setStatus })
             .where("id = :id", { id })
             .andWhere("company_id = :company_id", { company_id: company.id })
             .execute()
 
         if (updateStatus.affected === 0) return null
 
-        return { id, isAvailable: false }
-
-
-    }
-    async activeProduct(id: string, company: myJwtPayload):Promise<IProductStatus| null>{
-        const updateStatus = await this.productRepository
-            .createQueryBuilder()
-            .update(Products)
-            .set({ isAvailable: true })
-            .where("id = :id", { id })
-            .andWhere("company_id = :company_id", { company_id: company.id })
-            .execute()
-
-        if (updateStatus.affected === 0) return null
-
-        return { id, isAvailable: true }
-
+        return { id, isAvailable: setStatus }
     }
 
+    async listProduct(status: boolean | undefined, company: myJwtPayload): Promise<Products[] | null> {
+        const listStatus: Products[] | null = await this.productRepository.find({
+            where: {
+                isAvailable: status,
+                company: {
+                    id: company.id
+                }
+            },
+        })
+
+        return listStatus
+    }
 }

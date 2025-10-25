@@ -3,6 +3,8 @@ import AuthenticateMidlleware from "../../middlewares/AuthMidlleware";
 import ProductService from "../../service/company/ProductService";
 import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
 import { SuccessResponse } from "../../utils/SuccessResponse";
+import { listSchema } from "../../validations/Company/Product/List";
+import { setStatus } from "../../validations/Company/Product/SetStatus";
 
 
 class ProductController {
@@ -16,11 +18,10 @@ class ProductController {
     }
 
     private incializeRoutes() {
+        this.router.get('/list', AuthenticateMidlleware, this.listProduct.bind(this))
         this.router.post('/create', AuthenticateMidlleware, this.createProduct.bind(this))
         this.router.put('/update/:id', AuthenticateMidlleware, this.updateProduct.bind(this))
-        this.router.patch('/inactivate/:id', AuthenticateMidlleware, this.inactivateProduct.bind(this))
-        this.router.patch('/active/:id', AuthenticateMidlleware, this.activeProduct.bind(this))
-        this.router.get('/list',  AuthenticateMidlleware, this.listProduct.bind(this))
+        this.router.patch('/:id', AuthenticateMidlleware, this.setStatusProduct.bind(this))
     }
 
     private createProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -38,7 +39,7 @@ class ProductController {
     private updateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { id } = req.params
-            const payloudCompany:myJwtPayload = this.getCompanyFromRequest(req)
+            const payloudCompany: myJwtPayload = this.getCompanyFromRequest(req)
             const result = await this.productService.updateProduct(id, payloudCompany, req.body)
 
             res.status(200).json(
@@ -48,37 +49,30 @@ class ProductController {
             next(err)
         }
     }
-    
-    private inactivateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const {id} = req.params
-            const payloud:myJwtPayload = this.getCompanyFromRequest(req) 
-            
-            const result = await this.productService.inactivateProduct(id, payloud)
-            res.status(200).json(
-                SuccessResponse(result, 'Produto inativado com sucesso')
-            )
-        } catch (err) {
-            next(err)
-        }
-    }
 
-    private activeProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const {id} = req.params
-            const payloud:myJwtPayload = this.getCompanyFromRequest(req) 
-            
-            const result = await this.productService.activeProducts(id, payloud)
-            res.status(200).json(
-                SuccessResponse(result, 'Produto ativado com sucesso')
-            )
-        } catch (err) {
-            next(err)
-        }
+
+    private setStatusProduct = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+        const { id } = req.params
+        const payloudCompany: myJwtPayload = this.getCompanyFromRequest(req)
+        const setStatus: setStatus = req.query
+        
+
+        const result = await this.productService.setStatusProducts(id, payloudCompany, setStatus)
+
+        res.status(200).json(
+            SuccessResponse(result, `Produto atulizado status: isAvailable ${result?.isAvailable}`)
+        )
     }
 
     private listProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
+            const payloud: myJwtPayload = this.getCompanyFromRequest(req)
+            const status: listSchema = req.query
+
+            const result = await this.productService.listProduct(payloud, status)
+            res.status(200).json(
+                SuccessResponse(result, undefined, "fetch", "Produtos")
+            )
 
         } catch (err) {
             next(err)

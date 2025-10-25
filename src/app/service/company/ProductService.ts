@@ -7,6 +7,8 @@ import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
 import { productUpdateSchema, ProductUpdateSchema } from "../../validations/Company/Product/Update";
 import { mapProductToOutput } from "../../utils/Products/Products";
 import { Products } from "../../entity/Products";
+import { listSchema, listSchemaProducts } from "../../validations/Company/Product/List";
+import { setStatus, setStatusSchema } from "../../validations/Company/Product/SetStatus";
 
 
 
@@ -100,36 +102,66 @@ class ProductService {
         }
     }
 
+    setStatusProducts = async (id: string, payloudCompany: myJwtPayload, setStatus: setStatus):Promise<IProductStatus | null> => {
+        try {
+            const setStatusReq = await setStatusSchema.validate(setStatus, {
+                abortEarly: false
+            })
 
-    inactivateProduct = async (id: string, payloudCompany: myJwtPayload):Promise<IProductStatus| null> => {
-        if (!id) throw new ErrorExtension(401, 'Id auxente, por favor tente novamente')
+            const statusType: boolean | undefined =
+                setStatusReq.status === 'activate' ? true :
+                    setStatusReq.status === 'disable' ? false : undefined;
+
+            if (statusType === undefined) {
+                throw new ErrorExtension(
+                    401,
+                    'Você deve definir o status ("activate" ou "disable") na query para atualizar o produto.'
+                )
+            }
+
+            const resultSetStatus = await this.productRepository.setStatusProduct(id, payloudCompany, statusType)
+
+            if (!resultSetStatus) {
+                throw new ErrorExtension(
+                        401,
+                        'O Produto não pode ser atualizado '
+                    )
+            }
+
+            return resultSetStatus
 
 
-        const inactivate:IProductStatus | null = await this.productRepository.inactivateProduct(id, payloudCompany)
-
-        if (!inactivate) {
-            throw new ErrorExtension(404, 'Você não tem permissão para alterar este produto')
+        } catch (err) {
+            if (err instanceof yup.ValidationError) {
+                throw new ErrorExtension(401, err.errors.join(","))
+            }
+            throw err
         }
-
-        return inactivate
     }
 
+    listProduct = async (payloudCompany: myJwtPayload, status: listSchema): Promise<Products[] | null> => {
+        try {
+            const statusReq = await listSchemaProducts.validate(status, {
+                abortEarly: false
+            })
+            const listType: boolean | undefined = statusReq.status === 'active' ? true : statusReq.status === 'desactivated' ? false : undefined
 
-    activeProducts = async (id: string, payloudCompany: myJwtPayload):Promise<IProductStatus| null> => {
-        if (!id) throw new ErrorExtension(401, 'Id auxente, por favor tente novamente')
+            const listStatusValue: Products[] | null = await this.productRepository.listProduct(listType, payloudCompany)
 
+            const defaultName = listType === true ? 'ativo' : listType === false ? 'desativado' : ''
 
-        const inactivate:IProductStatus | null  = await this.productRepository.activeProduct(id, payloudCompany)
+            if (listStatusValue?.length === 0) {
+                throw new ErrorExtension(404, ` Nenhum produto ${defaultName} encontrado`)
+            }
 
-        if (!inactivate) {
-            throw new ErrorExtension(404, 'Você não tem permissão para alterar este produto')
+            return listStatusValue
+
+        } catch (err) {
+            if (err instanceof yup.ValidationError) {
+                throw new ErrorExtension(401, err.errors.join(","))
+            }
+            throw err
         }
-
-        return inactivate
-    }
-
-    listProduct = async () => {
-
     }
 }
 

@@ -9,7 +9,7 @@ export const SuccessResponse = <T>(
         create: `${itemName} criado com sucesso!`,
         update: `${itemName} atualizado com sucesso!`,
         delete: `${itemName} excluído com sucesso!`,
-        fetch: `${itemName} obtido com sucesso!`,
+        fetch: `${itemName} encontrado com sucesso!`,
     }
     return {
         status: "success",
