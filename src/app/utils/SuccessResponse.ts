@@ -12,8 +12,13 @@ export const SuccessResponse = <T>(
         fetch: `${itemName} encontrado com sucesso!`,
     }
     return {
-        status: "success",
+
         message: message ?? defaultMessages[action ?? "fetch"],
         data,
     }
 }
+export const ErrorResponse = (mesage:string, code=400)=>({
+    status:'error',
+    mesage, 
+    code,
+})

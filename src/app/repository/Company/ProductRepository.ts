@@ -1,9 +1,10 @@
-import { Repository } from "typeorm";
+import { LessThan, MoreThan, Repository } from "typeorm";
 import { Products } from "../../entity/Products";
 import { AppDataSource } from "../../../database/dataSource";
 import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
 import { IProduct, IProductStatus } from "../../interfaces/IProduct/IProduct";
 import { listSchema } from "../../validations/Company/Product/List";
+
 
 
 export class ProductRepository {
@@ -90,16 +91,23 @@ export class ProductRepository {
         return { id, isAvailable: setStatus }
     }
 
-    async listProduct(status: boolean | undefined, company: myJwtPayload): Promise<Products[] | null> {
-        const listStatus: Products[] | null = await this.productRepository.find({
-            where: {
-                isAvailable: status,
-                company: {
-                    id: company.id
-                }
-            },
+    async listProduct(filters: listSchema, company: myJwtPayload): Promise<Products[]> {
+        const order: Record<string, 'ASC' | 'DESC'> = {}
+        const where: any = {
+            company: { id: company.id }
+        }
+
+        if (filters.preco === 'maior') order.price = 'DESC'
+        else if (filters.preco === 'menor') order.price = 'ASC'
+
+        if (filters.status === 'active') where.isAvailable = true
+        else if (filters.status === 'desactivated') where.isAvailable = false
+
+        const products:Products[] = await this.productRepository.find({
+            where,
+            order
         })
 
-        return listStatus
+        return products
     }
 }

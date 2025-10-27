@@ -2,7 +2,7 @@ import { Response, Request, NextFunction, Router } from "express";
 import AuthenticateMidlleware from "../../middlewares/AuthMidlleware";
 import ProductService from "../../service/company/ProductService";
 import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { SuccessResponse } from "../../utils/SuccessResponse";
+import { ErrorResponse, SuccessResponse } from "../../utils/SuccessResponse";
 import { listSchema } from "../../validations/Company/Product/List";
 import { setStatus } from "../../validations/Company/Product/SetStatus";
 
@@ -63,7 +63,7 @@ class ProductController {
             res.status(200).json(
                 SuccessResponse(result, `Produto atulizado status: isAvailable ${result?.isAvailable}`)
             )
-        }catch (err) {
+        } catch (err) {
             next(err)
         }
     }
@@ -71,9 +71,16 @@ class ProductController {
     private listProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const payloud: myJwtPayload = this.getCompanyFromRequest(req)
-            const status: listSchema = req.query
+            const filter: listSchema = req.query
 
-            const result = await this.productService.listProduct(payloud, status)
+            const result = await this.productService.listProduct(payloud, filter)
+
+            if(!result || result.length === 0 ){
+                res.status(404).json(
+                    ErrorResponse('Nenhum produto encontrado!', 404)
+                )
+            }
+
             res.status(200).json(
                 SuccessResponse(result, undefined, "fetch", "Produtos")
             )

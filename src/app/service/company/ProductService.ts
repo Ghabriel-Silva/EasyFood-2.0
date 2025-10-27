@@ -102,7 +102,7 @@ class ProductService {
         }
     }
 
-    setStatusProducts = async (id: string, payloudCompany: myJwtPayload, setStatus: setStatus):Promise<IProductStatus | null> => {
+    setStatusProducts = async (id: string, payloudCompany: myJwtPayload, setStatus: setStatus): Promise<IProductStatus | null> => {
         try {
             const setStatusReq = await setStatusSchema.validate(setStatus, {
                 abortEarly: false
@@ -123,9 +123,9 @@ class ProductService {
 
             if (!resultSetStatus) {
                 throw new ErrorExtension(
-                        401,
-                        'O Produto não pode ser atualizado '
-                    )
+                    401,
+                    'O Produto não pode ser atualizado '
+                )
             }
 
             return resultSetStatus
@@ -139,21 +139,16 @@ class ProductService {
         }
     }
 
-    listProduct = async (payloudCompany: myJwtPayload, status: listSchema): Promise<Products[] | null> => {
+    listProduct = async (payloudCompany: myJwtPayload, filterReq: listSchema):Promise<Products[] | null> => {
         try {
-            const statusReq = await listSchemaProducts.validate(status, {
+            const statusReq = await listSchemaProducts.validate(filterReq, {
                 abortEarly: false
             })
-            const listType: boolean | undefined = statusReq.status === 'active' ? true : statusReq.status === 'desactivated' ? false : undefined
+            const listStatusValue: Products[] = await this.productRepository.listProduct(statusReq, payloudCompany)
 
-            const listStatusValue: Products[] | null = await this.productRepository.listProduct(listType, payloudCompany)
-
-            const defaultName = listType === true ? 'ativo' : listType === false ? 'desativado' : ''
-
-            if (listStatusValue?.length === 0) {
-                throw new ErrorExtension(404, ` Nenhum produto ${defaultName} encontrado`)
+            if(listStatusValue.length === 0){
+                return null
             }
-
             return listStatusValue
 
         } catch (err) {
