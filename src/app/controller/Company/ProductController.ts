@@ -18,10 +18,10 @@ class ProductController {
     }
 
     private incializeRoutes() {
-        this.router.get('/list', AuthenticateMidlleware, this.listProduct.bind(this))
-        this.router.post('/create', AuthenticateMidlleware, this.createProduct.bind(this))
-        this.router.put('/update/:id', AuthenticateMidlleware, this.updateProduct.bind(this))
-        this.router.patch('/:id', AuthenticateMidlleware, this.setStatusProduct.bind(this))
+        this.router.get('/', AuthenticateMidlleware, this.listProduct.bind(this))
+        this.router.post('/', AuthenticateMidlleware, this.createProduct.bind(this))
+        this.router.put('/:id', AuthenticateMidlleware, this.updateProduct.bind(this))
+        this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusProduct.bind(this))
     }
 
     private createProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -51,17 +51,21 @@ class ProductController {
     }
 
 
-    private setStatusProduct = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
-        const { id } = req.params
-        const payloudCompany: myJwtPayload = this.getCompanyFromRequest(req)
-        const setStatus: setStatus = req.query
-        
+    private setStatusProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { id } = req.params
+            const payloudCompany: myJwtPayload = this.getCompanyFromRequest(req)
+            const setStatus: setStatus = req.body
 
-        const result = await this.productService.setStatusProducts(id, payloudCompany, setStatus)
 
-        res.status(200).json(
-            SuccessResponse(result, `Produto atulizado status: isAvailable ${result?.isAvailable}`)
-        )
+            const result = await this.productService.setStatusProducts(id, payloudCompany, setStatus)
+
+            res.status(200).json(
+                SuccessResponse(result, `Produto atulizado status: isAvailable ${result?.isAvailable}`)
+            )
+        }catch (err) {
+            next(err)
+        }
     }
 
     private listProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

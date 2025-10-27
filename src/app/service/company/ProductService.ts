@@ -109,13 +109,13 @@ class ProductService {
             })
 
             const statusType: boolean | undefined =
-                setStatusReq.status === 'activate' ? true :
-                    setStatusReq.status === 'disable' ? false : undefined;
+                setStatusReq.status === 'active' ? true :
+                    setStatusReq.status === 'inactive' ? false : undefined;
 
             if (statusType === undefined) {
                 throw new ErrorExtension(
                     401,
-                    'Você deve definir o status ("activate" ou "disable") na query para atualizar o produto.'
+                    'Você deve definir o status ("active" ou "disable") na query para atualizar o produto.'
                 )
             }
 
