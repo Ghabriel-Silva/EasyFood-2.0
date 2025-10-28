@@ -64,9 +64,6 @@ export class ProductRepository {
         return productWithRelations
     }
 
-
-
-    //Pega o produto pelo id dele e verifica se esta vinculado ao usuario payloud 
     async findByid(id: string, company: myJwtPayload): Promise<Products | null> {
         return await this.productRepository.findOne({
             where: {
@@ -91,14 +88,15 @@ export class ProductRepository {
         return { id, isAvailable: setStatus }
     }
 
+
     async listProduct(filters: listSchema, company: myJwtPayload): Promise<Products[]> {
         const order: Record<string, 'ASC' | 'DESC'> = {}
         const where: any = {
             company: { id: company.id }
         }
 
-        if (filters.preco === 'maior') order.price = 'DESC'
-        else if (filters.preco === 'menor') order.price = 'ASC'
+        if (filters.price === 'maior') order.price = 'DESC'
+        else if (filters.price === 'menor') order.price = 'ASC'
 
         if (filters.status === 'active') where.isAvailable = true
         else if (filters.status === 'desactivated') where.isAvailable = false

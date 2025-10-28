@@ -6,7 +6,7 @@ export const listSchemaProducts = yup.object({
     .oneOf(["active", "desactivated"], "Status deve ser um dos seguintes valores: active, desactivated")
     .optional(),
 
-    preco: yup 
+    price: yup 
     .string()
     .oneOf(["menor", "maior"], "Preço deve ser um dos seguintes valores: maior, manor")
     .optional()

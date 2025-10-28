@@ -36,7 +36,7 @@ class ProductService {
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {
-                throw new ErrorExtension(401, err.errors.join(","))
+                throw new ErrorExtension(400, err.errors.join(","))
             }
             throw err
         }
@@ -56,7 +56,10 @@ class ProductService {
 
             const infoProducts: Products | null = await this.productRepository.findByid(id, payloudCompany)
 
-            if (!infoProducts) throw new ErrorExtension(404, 'Você não tem permissão para alterar este produto');
+            if (!infoProducts) {
+                throw new ErrorExtension(403, "Você não tem permissão para alterar este produto")
+            }
+
 
             const fieldsToUpdate: any = {};
 
@@ -82,13 +85,13 @@ class ProductService {
                 if (value !== currentValue) fieldsToUpdate[chave] = value;
             }
 
-            if (Object.keys(fieldsToUpdate).length === 0) throw new ErrorExtension(404, 'Nenhum Atualização encontrada')
+            if (Object.keys(fieldsToUpdate).length === 0) throw new ErrorExtension(400, "Nenhum campo de atualização enviado")
 
 
             const productUpdate = await this.productRepository.updateProduct(id, payloudCompany, fieldsToUpdate)
 
             if (!productUpdate) {
-                throw new ErrorExtension(400, "Erro Ao atulizar produto")
+                throw new ErrorExtension(500, "Erro interno ao atualizar o produto")
             }
             const productOutput: IProductOutput = mapProductToOutput(productUpdate)
 
@@ -96,7 +99,7 @@ class ProductService {
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {
-                throw new ErrorExtension(401, err.errors.join(","))
+                throw new ErrorExtension(400, err.errors.join(","))
             }
             throw err
         }
@@ -114,7 +117,7 @@ class ProductService {
 
             if (statusType === undefined) {
                 throw new ErrorExtension(
-                    401,
+                    400,
                     'Você deve definir o status ("active" ou "disable") na query para atualizar o produto.'
                 )
             }
@@ -133,27 +136,27 @@ class ProductService {
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {
-                throw new ErrorExtension(401, err.errors.join(","))
+                throw new ErrorExtension(400, err.errors.join(","))
             }
             throw err
         }
     }
 
-    listProduct = async (payloudCompany: myJwtPayload, filterReq: listSchema):Promise<Products[] | null> => {
+    listProduct = async (payloudCompany: myJwtPayload, filterReq: listSchema): Promise<Products[] | null> => {
         try {
             const statusReq = await listSchemaProducts.validate(filterReq, {
                 abortEarly: false
             })
             const listStatusValue: Products[] = await this.productRepository.listProduct(statusReq, payloudCompany)
 
-            if(listStatusValue.length === 0){
+            if (listStatusValue.length === 0) {
                 return null
             }
             return listStatusValue
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {
-                throw new ErrorExtension(401, err.errors.join(","))
+                throw new ErrorExtension(400, err.errors.join(","))
             }
             throw err
         }
