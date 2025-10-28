@@ -9,7 +9,7 @@ import { mapProductToOutput } from "../../utils/Products/Products";
 import { Products } from "../../entity/Products";
 import { listSchema, listSchemaProducts } from "../../validations/Company/Product/List";
 import { setStatus, setStatusSchema } from "../../validations/Company/Product/SetStatus";
-
+import {getUserCach, setUserCache, deleteUserCache} from "../../../config/cache"
 
 
 class ProductService {
@@ -147,6 +147,9 @@ class ProductService {
             const statusReq = await listSchemaProducts.validate(filterReq, {
                 abortEarly: false
             })
+
+            
+
             const listStatusValue: Products[] = await this.productRepository.listProduct(statusReq, payloudCompany)
 
             if (listStatusValue.length === 0) {
