@@ -23,7 +23,7 @@ class Admin {
             const { password, ...safeUser } = user
 
             res.status(201).json(
-                SuccessResponse(safeUser, undefined, "create", "Usuario")
+                SuccessResponse(safeUser,null, undefined, "create", "Usuario")
             )
 
         } catch (error) {

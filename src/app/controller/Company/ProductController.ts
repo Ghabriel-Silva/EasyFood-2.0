@@ -5,7 +5,6 @@ import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
 import { ErrorResponse, SuccessResponse } from "../../utils/SuccessResponse";
 import { listSchema } from "../../validations/Company/Product/List";
 import { setStatus } from "../../validations/Company/Product/SetStatus";
-import { getUserCach, setUserCache, deleteUserCache } from "../../../config/cache"
 
 class ProductController {
     public router: Router
@@ -30,7 +29,7 @@ class ProductController {
             const result = await this.productService.createProduct(req.body, user)
 
             res.status(200).json(
-                SuccessResponse(result, undefined, "create", "Produto")
+                SuccessResponse(result, null, undefined, "create", "Produto")
             )
         } catch (err) {
             next(err)
@@ -43,7 +42,7 @@ class ProductController {
             const result = await this.productService.updateProduct(id, payloudCompany, req.body)
 
             res.status(200).json(
-                SuccessResponse(result, undefined, "update", "Produto")
+                SuccessResponse(result, null, undefined, "update", "Produto")
             )
         } catch (err) {
             next(err)
@@ -61,7 +60,7 @@ class ProductController {
             const result = await this.productService.setStatusProducts(id, payloudCompany, setStatus)
 
             res.status(200).json(
-                SuccessResponse(result, `Produto atulizado status: isAvailable ${result?.isAvailable}`)
+                SuccessResponse(result, null, `Produto atulizado status: isAvailable ${result?.isAvailable}`)
             )
         } catch (err) {
             next(err)
@@ -73,21 +72,17 @@ class ProductController {
             const payloud: myJwtPayload = this.getCompanyFromRequest(req)
             const filter: listSchema = req.query
 
-            const cached = await getUserCach(payloud.id, 'products')
-            if (cached) return res.json({ source: 'cache', data: cached })
-
-
             const result = await this.productService.listProduct(payloud, filter)
 
-            if (!result || result.length === 0) {
-                res.status(404).json(
+            if (!result?.data || result.data.length === 0) {
+                return res.status(404).json(
                     ErrorResponse('Nenhum produto encontrado!', 404)
                 )
             }
-            await setUserCache(payloud.id, 'products', result, 300);
+
 
             res.status(200).json(
-                SuccessResponse(result, undefined, "fetch", "Produtos")
+                SuccessResponse(result?.data, result?.fromCache, undefined, "fetch", "Produtos")
             )
 
         } catch (err) {

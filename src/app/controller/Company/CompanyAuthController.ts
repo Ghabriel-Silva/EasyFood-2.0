@@ -27,6 +27,7 @@ class AuthUser {
                 res.status(201).json(
                     SuccessResponse<ILoginResponse>(
                         data,
+                        null,
                         `Bem vindo ${data.user.name}`
                     )
                 )

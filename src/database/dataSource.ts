@@ -24,9 +24,7 @@ export const AppDataSource = new DataSource({
     logging: false,
     entities: [Company, Category, Products, Order, OrderItem],
     migrations: [
-
         GenerateAllTables1760965347778
-
     ],
     subscribers: [],
 })

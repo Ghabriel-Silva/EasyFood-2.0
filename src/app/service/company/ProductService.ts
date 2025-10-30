@@ -1,4 +1,4 @@
-import { IProduct, IProductOutput, IProductStatus, IProductUpdate } from "../../interfaces/IProduct/IProduct";
+import { IProduct, IProductOutput, IProductsReturn, IProductStatus, IProductUpdate } from "../../interfaces/IProduct/IProduct";
 import { ProductRepository } from "../../repository/Company/ProductRepository";
 import * as yup from "yup";
 import ErrorExtension from "../../utils/ErrorExtension";
@@ -9,7 +9,8 @@ import { mapProductToOutput } from "../../utils/Products/Products";
 import { Products } from "../../entity/Products";
 import { listSchema, listSchemaProducts } from "../../validations/Company/Product/List";
 import { setStatus, setStatusSchema } from "../../validations/Company/Product/SetStatus";
-import {getUserCach, setUserCache, deleteUserCache} from "../../../config/cache"
+import { getFilterCompanyCache, setCompanyFilterCache } from "../../../cache/company/productsCache"
+import { invalidateCache } from "../../../cache/company/utils/invalidateCache";
 
 
 class ProductService {
@@ -19,17 +20,21 @@ class ProductService {
         this.productRepository = new ProductRepository()
     }
 
-    createProduct = async (data: IProduct, user: myJwtPayload): Promise<IProductOutput> => {
+    createProduct = async (data: IProduct, company: myJwtPayload): Promise<IProductOutput> => {
         try {
             const validateProduct: ProductSchema = await productCreateSchema.validate(data, {
                 abortEarly: false
             })
 
-            const product = await this.productRepository.createProduct(user, validateProduct)
 
+            const product = await this.productRepository.createProduct(company, validateProduct)
+            
             if (!product) {
                 throw new Error("Produto não encontrado após salvar");
+                
             }
+            await invalidateCache(company.id, 'products')
+
             const productOutput: IProductOutput = mapProductToOutput(product)
 
             return productOutput
@@ -38,13 +43,14 @@ class ProductService {
             if (err instanceof yup.ValidationError) {
                 throw new ErrorExtension(400, err.errors.join(","))
             }
+            console.log(err)
             throw err
         }
     }
 
 
 
-    updateProduct = async (id: string, payloudCompany: myJwtPayload, update: IProductUpdate): Promise<IProductOutput> => {
+    updateProduct = async (id: string, payloudCompany: myJwtPayload, update: IProductUpdate): Promise<IProductOutput | null> => {
         try {
             const validateProductUpdate: ProductUpdateSchema = await productUpdateSchema.validate(update, {
                 abortEarly: false
@@ -56,9 +62,11 @@ class ProductService {
 
             const infoProducts: Products | null = await this.productRepository.findByid(id, payloudCompany)
 
+
             if (!infoProducts) {
                 throw new ErrorExtension(403, "Você não tem permissão para alterar este produto")
             }
+
 
 
             const fieldsToUpdate: any = {};
@@ -93,6 +101,11 @@ class ProductService {
             if (!productUpdate) {
                 throw new ErrorExtension(500, "Erro interno ao atualizar o produto")
             }
+
+            await invalidateCache(payloudCompany.id, 'products')
+
+
+
             const productOutput: IProductOutput = mapProductToOutput(productUpdate)
 
             return productOutput
@@ -105,7 +118,7 @@ class ProductService {
         }
     }
 
-    setStatusProducts = async (id: string, payloudCompany: myJwtPayload, setStatus: setStatus): Promise<IProductStatus | null> => {
+    setStatusProducts = async (id: string, payloudCompany: myJwtPayload, setStatus: setStatus): Promise<IProductStatus> => {
         try {
             const setStatusReq = await setStatusSchema.validate(setStatus, {
                 abortEarly: false
@@ -131,6 +144,8 @@ class ProductService {
                 )
             }
 
+            await invalidateCache(payloudCompany.id, 'products')
+
             return resultSetStatus
 
 
@@ -142,20 +157,32 @@ class ProductService {
         }
     }
 
-    listProduct = async (payloudCompany: myJwtPayload, filterReq: listSchema): Promise<Products[] | null> => {
+    listProduct = async (payloudCompany: myJwtPayload, filterReq: listSchema): Promise<IProductsReturn | null> => {
         try {
             const statusReq = await listSchemaProducts.validate(filterReq, {
                 abortEarly: false
             })
 
-            
+            const cached = await getFilterCompanyCache(payloudCompany.id, statusReq, 'products')
 
+            if (cached) {
+                return {
+                    data: cached,
+                    fromCache: true
+                };
+            }
             const listStatusValue: Products[] = await this.productRepository.listProduct(statusReq, payloudCompany)
 
             if (listStatusValue.length === 0) {
                 return null
             }
-            return listStatusValue
+
+            await setCompanyFilterCache(payloudCompany.id, 'products', listStatusValue, statusReq, 120)
+
+            return {
+                data: listStatusValue,
+                fromCache: false
+            }
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {

@@ -1,5 +1,6 @@
 export const SuccessResponse = <T>(
     data: T | null,
+    cache?: boolean | null,
     message?: string,
     action?: "create" | 'update' | "delete" | "fetch",
     option?: string
@@ -14,6 +15,7 @@ export const SuccessResponse = <T>(
     return {
 
         message: message ?? defaultMessages[action ?? "fetch"],
+        cache,
         data,
     }
 }

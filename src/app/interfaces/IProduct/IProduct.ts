@@ -41,3 +41,8 @@ export interface IProductStatus {
     id:string;
     isAvailable: boolean;
 } 
+
+export interface IProductsReturn {
+    data:IProduct[]
+    fromCache:boolean
+}
