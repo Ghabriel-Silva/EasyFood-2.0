@@ -69,33 +69,29 @@ class ProductService {
 
 
 
-            const fieldsToUpdate: any = {};
+            const fieldsToUpdate: any = {}
 
             for (const [chave, value] of Object.entries(validateProductUpdate)) {
                 if (value === undefined) continue;
 
-                let currentValue = (infoProducts as any)[chave];
+                let currentValue = (infoProducts as any)[chave]
 
-                if (chave === "price") currentValue = Number(currentValue);
+                if (chave === "price") currentValue = Number(currentValue)
 
                 if (chave === "expirationDate") {
-                    if (value === null) fieldsToUpdate[chave] = null;
+                    if (value === null) fieldsToUpdate[chave] = null
                     else {
                         const currentDate = currentValue
                             ? new Date(currentValue).toISOString().split("T")[0]
                             : null;
-                        const incomingDate = new Date(value).toISOString().split("T")[0];
-                        if (currentDate !== incomingDate) fieldsToUpdate[chave] = value;
+                        const incomingDate = new Date(value).toISOString().split("T")[0]
+                        if (currentDate !== incomingDate) fieldsToUpdate[chave] = value
                     }
                     continue;
                 }
-
-                if (value !== currentValue) fieldsToUpdate[chave] = value;
+                if (value !== currentValue) fieldsToUpdate[chave] = value
             }
-
             if (Object.keys(fieldsToUpdate).length === 0) throw new ErrorExtension(400, "Nenhum campo de atualização enviado")
-
-
             const productUpdate = await this.productRepository.updateProduct(id, payloudCompany, fieldsToUpdate)
 
             if (!productUpdate) {
