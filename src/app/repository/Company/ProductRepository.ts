@@ -1,4 +1,4 @@
-import { LessThan, MoreThan, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { Products } from "../../entity/Products";
 import { AppDataSource } from "../../../database/dataSource";
 import { myJwtPayload } from "../../interfaces/IAuth/IAuth";

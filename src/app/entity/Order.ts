@@ -3,10 +3,20 @@ import { Company } from "./Company";
 import { OrderItem } from "./OrderItem";
 
 export enum OrderStatus {
-    PENDING = "PENDING",
-    COMPLETED = "COMPLETED",
-    CANCELLED = "CANCELLED"
+    PENDING = "Pendente",
+    PREPARING = "Preparando",
+    COMPLETED = "Completo",
+    DELIVERED = "Entregue",
+    CANCELLED = "Cancelado",
 }
+
+export enum PaymentMethod {
+    CASH = "Dinheiro",
+    CARD = "Cartão",
+    PIX = "Pix",
+    OTHER = "Outros"
+}
+
 
 @Entity("orders")
 export class Order {
@@ -28,6 +38,19 @@ export class Order {
         default: OrderStatus.PENDING
     })
     status: OrderStatus;
+
+    @Column({
+        type: "enum",
+        enum:PaymentMethod,
+        default:PaymentMethod.OTHER
+    })
+    paymentMethod:PaymentMethod
+
+    @Column('decimal', { precision: 10, scale: 2, default: 0 })
+    additionalValue?: number
+
+    @Column('decimal', { precision: 10, scale: 2, default: 0 })
+    discountValue?: number
 
     @Column("decimal", { precision: 10, scale: 2, default: 0 })
     total: number;
