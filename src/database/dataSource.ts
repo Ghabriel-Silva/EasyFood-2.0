@@ -9,6 +9,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 import { GenerateAllTables1760965347778 } from '../database/migrations/1760965347778-GenerateAllTables'
+import { EditeTablesCompanyOrder1762120085785 } from '../database/migrations/1762120085785-EditeTablesCompanyOrder'
 
 
 
@@ -24,7 +25,8 @@ export const AppDataSource = new DataSource({
     logging: false,
     entities: [Company, Category, Products, Order, OrderItem],
     migrations: [
-        GenerateAllTables1760965347778
+        GenerateAllTables1760965347778,
+        EditeTablesCompanyOrder1762120085785
     ],
     subscribers: [],
 })

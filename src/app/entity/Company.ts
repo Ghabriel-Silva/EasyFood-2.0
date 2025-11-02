@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
-import {Products} from "./Products";
-import {Category }from "./Category";
+import { Products } from "./Products";
+import { Category } from "./Category";
 import { Order } from "./Order";
 
 export enum enunRole {
@@ -33,7 +33,10 @@ export class Company {
     @Column('boolean', { nullable: false, default: true })
     isActive: boolean;
 
-   
+    @Column('decimal', { precision: 10, scale: 2, default: 0 })
+    defaultFreight: number; //frete padrao 
+
+    
 
     @OneToMany(() => Products, products => products.company)
     products: Products[];

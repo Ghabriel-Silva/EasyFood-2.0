@@ -41,10 +41,19 @@ export class Order {
 
     @Column({
         type: "enum",
-        enum:PaymentMethod,
-        default:PaymentMethod.OTHER
+        enum: PaymentMethod,
+        default: PaymentMethod.OTHER
     })
-    paymentMethod:PaymentMethod
+    paymentMethod: PaymentMethod
+
+    @Column({ default: true })
+    isFreightApplied: boolean;
+
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    customFreight: number;
+
+    @Column({type:'decimal', precision:10, scale:2, default:0})
+    totalFreight:number
 
     @Column('decimal', { precision: 10, scale: 2, default: 0 })
     additionalValue?: number
