@@ -1,4 +1,4 @@
-import ErrorExtension from "../utils/ErrorExtension";
+import ErrorExtension from "../utils/error-extension";
 import { Request, Response, NextFunction } from 'express'
 
 const httpErrorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {

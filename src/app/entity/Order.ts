@@ -47,7 +47,7 @@ export class Order {
     paymentMethod: PaymentMethod
 
     @Column({ default: true })
-    isFreightApplied: boolean;
+    isFreightApplied: boolean; //Se true o valor padrão do frete é aplicado se não não é aplicado
 
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
     customFreight: number;

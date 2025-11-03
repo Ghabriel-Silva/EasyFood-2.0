@@ -1,8 +1,8 @@
 import { Router } from "express";
-import userRouter from "../controller/Company/CompanyAuthController";
-import adminRouter from "../controller/Admin/AdminControler";
-import productsRoutes from "../controller/Company/ProductController";
-import orderRouters from "../controller/Company/OrdersController";
+import userRouter from "../controller/company/auth-controller";
+import adminRouter from "../controller/admin/admin-controler";
+import productsRoutes from "../controller/company/product-controller";
+import orderRouters from "../controller/company/orders-controller";
 
 const routers = Router()
 

@@ -1,5 +1,5 @@
-import { listSchema } from "../../app/validations/Company/Product/List";
-import client from "../redisClient";
+import { listSchema } from "../../app/validations/company/product/list";
+import client from "../redis-client";
 
 const SIX_HOURS = 6* 60 *60
 

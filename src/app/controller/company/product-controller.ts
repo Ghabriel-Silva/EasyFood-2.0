@@ -1,10 +1,10 @@
 import { Response, Request, NextFunction, Router } from "express";
-import AuthenticateMidlleware from "../../middlewares/AuthMidlleware";
-import ProductService from "../../service/company/ProductService";
-import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { ErrorResponse, SuccessResponse } from "../../utils/SuccessResponse";
-import { listSchema } from "../../validations/Company/Product/List";
-import { setStatus } from "../../validations/Company/Product/SetStatus";
+import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
+import ProductService from "../../service/company/product-service";
+import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
+import { ErrorResponse, SuccessResponse } from "../../utils/success-response";
+import { listSchema } from "../../validations/company/product/list";
+import { setStatus } from "../../validations/company/product/set-status";
 
 class ProductController {
     public router: Router

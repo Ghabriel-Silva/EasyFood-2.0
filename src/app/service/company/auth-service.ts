@@ -1,10 +1,10 @@
-import { ILogin, IUser, myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { UserRepository } from "../../repository/Company/CompanyAuthRepository";
-import ErrorExtension from "../../utils/ErrorExtension";
+import { ILogin, IUser, myJwtPayload } from "../../interfaces/i-auth/i-auth";
+import { UserRepository } from "../../repository/company/auth-repository";
+import ErrorExtension from "../../utils/error-extension";
 import * as yup from "yup";
 import bcrypt from "bcrypt";
-import LoginSchema from "../../validations/Company/Login";
-import Auth from "../../utils/Auth";
+import LoginSchema from "../../validations/company/login";
+import Auth from "../../utils/auth";
 
 export class UserAuthService {
     private userRepository: UserRepository

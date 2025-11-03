@@ -1,8 +1,8 @@
 import { Response, Request, NextFunction, Router } from "express";
-import orderService from "../../service/company/OrdersService";
-import AuthenticateMidlleware from "../../middlewares/AuthMidlleware";
-import { IOrdersRegister } from "../../interfaces/IOrders/IOrders";
-import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
+import orderService from "../../service/company/orders-service";
+import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
+import { IOrdersRegister } from "../../interfaces/i-orders/i-orders";
+import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 
 
 

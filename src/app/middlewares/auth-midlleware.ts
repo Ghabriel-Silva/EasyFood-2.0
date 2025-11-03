@@ -1,8 +1,8 @@
-import { myJwtPayload } from "../interfaces/IAuth/IAuth"
-import Auth from "../utils/Auth"
+import { myJwtPayload } from "../interfaces/i-auth/i-auth"
+import Auth from "../utils/auth"
 
 import { Request, Response, NextFunction } from 'express'
-import ErrorExtension from "../utils/ErrorExtension"
+import ErrorExtension from "../utils/error-extension"
 
 
 declare global {

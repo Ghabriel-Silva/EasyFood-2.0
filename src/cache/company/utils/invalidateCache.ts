@@ -1,4 +1,4 @@
-import client from "../../redisClient"
+import client from "../../redis-client"
 
 export const invalidateCache = async (companyId: string, module: string) => {
     const patternWithFilters = `company:${companyId}:${module}:*`

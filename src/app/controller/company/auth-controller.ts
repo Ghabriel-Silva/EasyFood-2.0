@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { UserAuthService } from "../../service/company/CompanyAuthService";
-import { ILoginResponse, IRegister } from "../../interfaces/IAuth/IAuth";
-import { SuccessResponse } from "../../utils/SuccessResponse";
-import AuthenticateMidlleware from "../../middlewares/AuthMidlleware";
+import { UserAuthService } from "../../service/company/auth-service";
+import { ILoginResponse, IRegister } from "../../interfaces/i-auth/i-auth";
+import { SuccessResponse } from "../../utils/success-response";
+import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
 
 class AuthUser {
     public router: Router

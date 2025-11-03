@@ -1,5 +1,5 @@
 import { Products } from "../../entity/Products";
-import { IProductOutput } from "../../interfaces/IProduct/IProduct";
+import { IProductOutput } from "../../interfaces/i-product/i-product";
 
 export const mapProductToOutput = (product: Products): IProductOutput => ({
     id: product.id,

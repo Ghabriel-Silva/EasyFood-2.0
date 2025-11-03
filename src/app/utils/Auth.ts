@@ -1,7 +1,7 @@
 import Jwt, { SignOptions } from "jsonwebtoken"
 import dotenv from "dotenv"
-import { myJwtPayload } from "../interfaces/IAuth/IAuth"
-import ErrorExtension from "./ErrorExtension"
+import { myJwtPayload } from "../interfaces/i-auth/i-auth"
+import ErrorExtension from "./error-extension"
 
 
 const SECRET: string = process.env.JWT_SECRET as string

@@ -1,15 +1,15 @@
-import { IProduct, IProductOutput, IProductsReturn, IProductStatus, IProductUpdate } from "../../interfaces/IProduct/IProduct";
-import { ProductRepository } from "../../repository/Company/ProductRepository";
+import { IProduct, IProductOutput, IProductsReturn, IProductStatus, IProductUpdate } from "../../interfaces/i-product/i-product";
+import { ProductRepository } from "../../repository/company/product-repository";
 import * as yup from "yup";
-import ErrorExtension from "../../utils/ErrorExtension";
-import { productCreateSchema, ProductSchema } from "../../validations/Company/Product/Create";
-import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { productUpdateSchema, ProductUpdateSchema } from "../../validations/Company/Product/Update";
-import { mapProductToOutput } from "../../utils/Products/Products";
+import ErrorExtension from "../../utils/error-extension";
+import { productCreateSchema, ProductSchema } from "../../validations/company/product/create";
+import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
+import { productUpdateSchema, ProductUpdateSchema } from "../../validations/company/product/update";
+import { mapProductToOutput } from "../../utils/products/products";
 import { Products } from "../../entity/Products";
-import { listSchema, listSchemaProducts } from "../../validations/Company/Product/List";
-import { setStatus, setStatusSchema } from "../../validations/Company/Product/SetStatus";
-import { getFilterCompanyCache, setCompanyFilterCache } from "../../../cache/company/productsCache"
+import { listSchema, listSchemaProducts } from "../../validations/company/product/list";
+import { setStatus, setStatusSchema } from "../../validations/company/product/set-status";
+import { getFilterCompanyCache, setCompanyFilterCache } from "../../../cache/company/products-cache"
 import { invalidateCache } from "../../../cache/company/utils/invalidateCache";
 
 

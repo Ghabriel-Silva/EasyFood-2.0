@@ -1,9 +1,9 @@
 import { Repository } from "typeorm";
 import { Products } from "../../entity/Products";
 import { AppDataSource } from "../../../database/dataSource";
-import { myJwtPayload } from "../../interfaces/IAuth/IAuth";
-import { IProduct, IProductStatus } from "../../interfaces/IProduct/IProduct";
-import { listSchema } from "../../validations/Company/Product/List";
+import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
+import { IProduct, IProductStatus } from "../../interfaces/i-product/i-product";
+import { listSchema } from "../../validations/company/product/list";
 
 
 

@@ -3,7 +3,7 @@ import { AppDataSource } from "./database/dataSource"
 import 'reflect-metadata'
 import cors from 'cors'
 import 'express-async-errors'
-import httpErrorMiddleware from "./app/middlewares/ErrorMiddleware"
+import httpErrorMiddleware from "./app/middlewares/error-middleware"
 import routers from "./app/routes"
 
 const app = express()

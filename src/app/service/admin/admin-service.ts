@@ -1,7 +1,7 @@
-import { AdminRepository } from "../../repository/Admin/AdminRepository";
-import { IRegister, IUser } from "../../interfaces/IAuth/IAuth";
-import ErrorExtension from "../../utils/ErrorExtension";
-import registerSchema from "../../validations/Admin/Register";
+import { AdminRepository } from "../../repository/admin/admin-repository";
+import { IRegister, IUser } from "../../interfaces/i-auth/i-auth";
+import ErrorExtension from "../../utils/error-extension";
+import registerSchema from "../../validations/admin/register";
 import * as yup from "yup";
 import bcrypt from "bcrypt";
 import { Company } from "../../entity/Company";
