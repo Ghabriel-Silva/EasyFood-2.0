@@ -30,7 +30,7 @@ class ProductService {
             const product = await this.productRepository.createProduct(company, validateProduct)
             
             if (!product) {
-                throw new Error("Produto não encontrado após salvar");
+                throw new ErrorExtension(404, "Produto não encontrado após salvar")
                 
             }
             await invalidateCache(company.id, 'products')

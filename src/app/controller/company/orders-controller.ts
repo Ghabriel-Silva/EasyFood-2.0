@@ -3,6 +3,8 @@ import orderService from "../../service/company/orders-service";
 import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
 import { IOrdersRegister } from "../../interfaces/i-orders/i-orders";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
+import { SuccessResponse } from "../../utils/success-response";
+import { Order } from "../../entity/Order";
 
 
 
@@ -26,10 +28,20 @@ class OrderControler {
 
     }
 
-    private createOrder = async (req: Request, res: Response, next: NextFunction) => {
+    private createOrder = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
         try {
-            const company: myJwtPayload = this.getCompanyFromRequest(req)
-            const result = this.OrdeService.createOrder(req.body, company)
+            const company: myJwtPayload =  this.getCompanyFromRequest(req)
+            const result = await this.OrdeService.createOrder(req.body, company)
+
+            res.status(200).json(
+                SuccessResponse(
+                    result,
+                    null,
+                    undefined,  
+                    "create",
+                    "Pedido "
+                )
+            )
         } catch (err) {
             next(err)
         }
