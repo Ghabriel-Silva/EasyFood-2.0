@@ -31,7 +31,7 @@ class OrderControler {
     private createOrder = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
         try {
             const company: myJwtPayload =  this.getCompanyFromRequest(req)
-            const result = await this.OrdeService.createOrder(req.body, company)
+            const result :Order =  await this.OrdeService.createOrder(req.body, company)
 
             res.status(200).json(
                 SuccessResponse(

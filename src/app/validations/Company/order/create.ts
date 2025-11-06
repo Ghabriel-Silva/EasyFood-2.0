@@ -23,6 +23,13 @@ export const createOrderSchema = yup.object({
         .oneOf(['Dinheiro', 'Cartão', 'Pix', 'Outros'], "Forma de pagamento inválida")
         .required('Forma de pagamento obrigatória!'),
 
+
+    status: yup
+        .string()
+        .oneOf(['Pendente', 'Preparando', 'Completo', 'Entregue', 'Cancelado'], "Status inválido")
+        .notRequired(),
+
+
     isFreightApplied: yup
         .boolean()
         .typeError("O valor deve ser booleano")
@@ -31,13 +38,13 @@ export const createOrderSchema = yup.object({
     customFreight: yup
         .number()
         .typeError('O frete deve ser um número')
-        .positive('O frete deve ser positivo')
+        .min(0, 'O frete deve ser positivo')
         .notRequired(),
 
     additionalValue: yup
         .number()
         .typeError('O valor adicional deve ser um número')
-        .positive('O valor adicional deve ser positivo')
+        .min(0, 'O valor adicional deve ser positivo')
         .notRequired(),
 
     discountValue: yup
