@@ -18,37 +18,73 @@ class orderRepository {
         this.orderRepo = AppDataSource.getRepository(Order)
     }
 
-    async createOrder(data: CreateOrderSchema, company: myJwtPayload, sumFreight: number, valorTotalFinal: number): Promise<Order | null> {
-        const newOrder: Order = await this.orderRepo.create({
-            ...data as DeepPartial<Order>,
-            totalFreight: sumFreight,
-            total: valorTotalFinal,
-            company: { id: company.id },
-        })
+    async createOrder(
+        data: CreateOrderSchema,
+        company: myJwtPayload,
+        sumFreight: number,
+        valorTotalFinal: number
+    ): Promise<Order | null> {
+        const queryRunner = AppDataSource.createQueryRunner()
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
 
-        await this.orderRepo.save(newOrder)
+        try {
+            // inicio criando o molde do pedido
+            const newOrder: Order = queryRunner.manager.create(Order, {
+                ...data as DeepPartial<Order>,
+                totalFreight: sumFreight,
+                total: valorTotalFinal,
+                company: { id: company.id },
+            })
 
-        const items = data.items.map(item => ({
-            quantity: item.quantity,
-            subtotal: toMoney(item.quantity * item.price),
-            price: item.price,
-            order: { id: newOrder.id },
-            product: { id: item.product_id }
-        }))
+            await queryRunner.manager.save(Order, newOrder)
 
-        await AppDataSource
-            .createQueryBuilder()
-            .insert()
-            .into(OrderItem)
-            .values(items)
-            .execute()
+            // aqui vou criar  os itens do pedido, tenho que esperar o pedido ser gerado pois preciso do id da order 
+            const items = data.items.map(item => ({
+                quantity: item.quantity,
+                subtotal: toMoney(item.quantity * item.price),
+                price: item.price,
+                order: { id: newOrder.id },
+                product: { id: item.product_id },
+            }))
 
-        const orderWithItems = await this.orderRepo.findOne({
-            where: { id: newOrder.id },
-            relations: ["items", "items.product"]
-        })
-        return orderWithItems
+            await queryRunner.manager
+                .createQueryBuilder()
+                .insert()
+                .into(OrderItem)
+                .values(items)
+                .execute()
+
+            // atualizando  os estoques dos produtos envolvidos
+            for (const item of data.items) {
+                await queryRunner.manager
+                    .createQueryBuilder()
+                    .update(Products)
+                    .set({ quantity: () => `quantity - ${item.quantity}` }) // desconta direto no banco
+                    .where("id = :id", { id: item.product_id })
+                    .andWhere("company_id = :company_id", { company_id: company.id })
+                    .execute()
+            }
+
+            // busco pedido se tudo deu certo
+            const orderWithItems = await queryRunner.manager.findOne(Order, {
+                where: { id: newOrder.id },
+                relations: ["items", "items.product"],
+            });
+
+            //  finalizando a transação  
+            await queryRunner.commitTransaction();
+            return orderWithItems ?? null
+
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            console.error("Erro ao criar pedido com atualização de estoque:", error);
+            throw error;
+        } finally {
+            await queryRunner.release()
+        }
     }
+
 
     async getCompanyFreightValue(company: myJwtPayload): Promise<Company | null> {
         return await AppDataSource
@@ -59,7 +95,7 @@ class orderRepository {
             .getOne()
     }
 
-    async existProductid(company: myJwtPayload, productsIds: string[]):Promise<Products[]>  {
+    async existProductid(company: myJwtPayload, productsIds: string[]): Promise<Products[]> {
         return await AppDataSource
             .getRepository(Products)
             .find({

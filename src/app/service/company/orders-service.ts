@@ -22,72 +22,92 @@ class orderService {
         try {
             let freteDefault: number | undefined
 
-
             const validateOrder: CreateOrderSchema = await createOrderSchema.validate(data, {
                 abortEarly: false
-            })
+            });
 
-            //Regra de validação de produtos tem que existir e pertener a empresa que criou o produto
-            const idProducts = validateOrder.items.map(item => item.product_id)
+            //  Valida produtos existentes da empresa
+            const idProducts = validateOrder.items.map(item => item.product_id);
+            const productsDb: Products[] = await this.orderRepository.existProductid(payloudCompany, idProducts)
 
-            const validProducts: Products[] = await this.orderRepository.existProductid(payloudCompany, idProducts)
+            if (productsDb.length !== idProducts.length) {
+                const invalidProducts = validateOrder.items
+                    .filter(item => !productsDb.some(p => p.id === item.product_id))
+                    .map(item => item.name)
 
-            console.log(validProducts)
-            if (validProducts.length !== idProducts.length) {
-                const invalidIds: string[] = idProducts.filter(id => !validProducts.find(p => p.id === id))
-                throw new ErrorExtension(404, `Produtos inválidos: ${invalidIds.join(', ')}`)
+                throw new ErrorExtension(
+                    404,
+                    `Os seguintes produtos não foram encontrados: ${invalidProducts.join(', ')}`
+                );
             }
 
-            //Regra de negócio para somar valores de fretes
+            //  Regra de frete
             if (validateOrder.isFreightApplied) {
                 const freteCompany: Company | null = await this.orderRepository.getCompanyFreightValue(payloudCompany)
                 if (!freteCompany) {
-                    throw new ErrorExtension(404, 'Valor do frete da compania não encontrado')
+                    throw new ErrorExtension(
+                        404,
+                        'Valor do frete da compania não encontrado'
+                    );
                 }
                 freteDefault = freteCompany.defaultFreight
             }
 
             const freightDefaultNum: number = toMoney(freteDefault)
-
-            const customFreight: number =
-                typeof validateOrder.customFreight === 'number'
-                    ? validateOrder.customFreight
-                    : 0
-
+            const customFreight: number = typeof validateOrder.customFreight === 'number' ? validateOrder.customFreight : 0
             const sumFreight: number = toMoney(customFreight + freightDefaultNum)
 
-
-            //Regra de negócio para somar valores de do pedido e adcional e deconto
-            const adicionalValue = toMoney(validateOrder.additionalValue);
-            const discountValue = toMoney(validateOrder.discountValue);
-
+            //  Cálculos de valores do pedido
+            const adicionalValue = toMoney(validateOrder.additionalValue)
+            const discountValue = toMoney(validateOrder.discountValue)
 
             const valorItems: number = validateOrder.items.reduce((acc, item) => {
-                const subtotal = item.price * item.quantity
-                const soma = acc + subtotal
-                return toMoney(soma)
-            }, 0)
+                return toMoney(acc + item.price * item.quantity)
+            }, 0);
 
             const valorTotal = toMoney(adicionalValue + sumFreight + valorItems)
+
             if (valorTotal < discountValue) {
-                throw new ErrorExtension(422, 'O Desconto não pode ser mais que o valor Total da Compra')
+                throw new ErrorExtension(422, 'O Desconto não pode ser maior que o valor Total da Compra')
             }
 
             const valorTotalFinal: number = toMoney(valorTotal - discountValue)
 
-            const dataOrder: Order | null = await this.orderRepository.createOrder(validateOrder, payloudCompany, sumFreight, valorTotalFinal)
-            if (!dataOrder) {
-                throw new ErrorExtension(400, 'Erro ao salvar Pedido')
+            //  Valida quantidades no estoque sem atualizar aqui
+            for (const item of validateOrder.items) {
+                const productInDB = productsDb.find(p => p.id === item.product_id)
+                if (!productInDB || productInDB.quantity === null) continue
+
+                if (item.quantity > productInDB.quantity) {
+                    throw new ErrorExtension(
+                        400,
+                        `Quantidade maior que a disponível para o produto ${productInDB.name}`
+                    );
+                }
             }
-            return dataOrder
+
+            // cria pedido  e  atualiza estoque em uma transação unica no banco de dado
+            const dataOrder: Order | null = await this.orderRepository.createOrder(
+                validateOrder,
+                payloudCompany,
+                sumFreight,
+                valorTotalFinal
+            );
+
+            if (!dataOrder) {
+                throw new ErrorExtension(400, 'Erro ao salvar Pedido');
+            }
+
+            return dataOrder;
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {
-                throw new ErrorExtension(400, err.errors.join(","))
+                throw new ErrorExtension(400, err.errors.join(","));
             }
-            throw err
+            throw err;
         }
     }
+
 
 
 }
