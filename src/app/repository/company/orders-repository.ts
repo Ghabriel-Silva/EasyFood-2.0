@@ -1,12 +1,13 @@
 import { DeepPartial, Repository, In } from "typeorm"
 import { AppDataSource } from "../../../database/dataSource"
-import { Order } from "../../entity/Order"
+import { Order, OrderStatus } from "../../entity/Order"
 import { CreateOrderSchema } from "../../validations/company/order/create"
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth"
 import { OrderItem } from "../../entity/OrderItem"
 import { Company } from "../../entity/Company"
 import { toMoney } from "../../utils/money"
 import { Products } from "../../entity/Products"
+import {  SetStatusSchemaOrder } from "../../validations/company/order/set-status"
 
 
 
@@ -29,7 +30,7 @@ class orderRepository {
         await queryRunner.startTransaction()
 
         try {
-            // inicio criando o molde do pedido
+            //  criando o molde do pedido
             const newOrder: Order = queryRunner.manager.create(Order, {
                 ...data as DeepPartial<Order>,
                 totalFreight: sumFreight,
@@ -106,6 +107,19 @@ class orderRepository {
                     }
                 }
             })
+    }
+
+    async setStatusOrder(status:SetStatusSchemaOrder, company:string) {
+        const resultStatus = await this.orderRepo
+        .createQueryBuilder()
+        .update(Order)
+        .set({status:status.status}) 
+        .where("company.id = :id", {id:company})
+        .andWhere("status !== :status", {status})
+        .execute()
+
+        if(resultStatus.affected === 0) return null
+        if(resultStatus) return true
     }
 
 }

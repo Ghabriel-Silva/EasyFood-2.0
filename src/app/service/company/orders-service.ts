@@ -8,6 +8,8 @@ import { Order } from "../../entity/Order";
 import { Company } from "../../entity/Company";
 import { toMoney } from "../../utils/money";
 import { Products } from "../../entity/Products";
+import { setStatusSchema } from "../../validations/company/product/set-status";
+import { SetStatusSchemaOrder, setStatusSchemaOrder } from "../../validations/company/order/set-status";
 
 
 
@@ -106,6 +108,30 @@ class orderService {
             }
             throw err;
         }
+    }
+
+    setStatusOrder = async (statusOrder: string, payloudCompany: myJwtPayload) => {
+        try {
+            //primeiro validação de entrada
+            const statusValid: SetStatusSchemaOrder = await setStatusSchemaOrder.validate(statusOrder, {
+                abortEarly: false
+            })
+   
+            //Verificar se o produto que quero setar existe no banco se existir valido se o valor setado não é o mesmo que quero setar 
+
+            const result = await this.orderRepository.setStatusOrder(statusValid, payloudCompany.id)
+
+            //caso true retorno o valor para o controler da order atualiza porem apenas a indicação do status para o front 
+            return result
+
+        } catch (err) {
+            if (err instanceof yup.ValidationError) {
+                throw new ErrorExtension(400, err.errors.join(","))
+            }
+        }
+
+
+
     }
 
 

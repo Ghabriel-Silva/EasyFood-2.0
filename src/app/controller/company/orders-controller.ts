@@ -1,7 +1,6 @@
 import { Response, Request, NextFunction, Router } from "express";
 import orderService from "../../service/company/orders-service";
 import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
-import { IOrdersRegister } from "../../interfaces/i-orders/i-orders";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import { SuccessResponse } from "../../utils/success-response";
 import { Order } from "../../entity/Order";
@@ -28,16 +27,16 @@ class OrderControler {
 
     }
 
-    private createOrder = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+    private createOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const company: myJwtPayload =  this.getCompanyFromRequest(req)
-            const result :Order =  await this.OrdeService.createOrder(req.body, company)
+            const company: myJwtPayload = this.getCompanyFromRequest(req)
+            const result: Order = await this.OrdeService.createOrder(req.body, company)
 
             res.status(200).json(
                 SuccessResponse(
                     result,
                     null,
-                    undefined,  
+                    undefined,
                     "create",
                     "Pedido "
                 )
@@ -55,7 +54,16 @@ class OrderControler {
     private updateOrder = async () => { }
 
 
-    private setStatusOrder = async () => { }
+    private setStatusOrder = async (req:Request, res: Response, next: NextFunction):Promise<void> => {
+        try{    
+            const company = this.getCompanyFromRequest(req)
+            const orderAtualizada = await this.OrdeService.setStatusOrder(req.body, company)
+
+            res.status(200).json('atualizou aqui')
+        }catch(err){
+            next(err)
+        }
+    }
 }
 
 const orderRouters = new OrderControler().router
