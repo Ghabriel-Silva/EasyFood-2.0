@@ -54,13 +54,22 @@ class OrderControler {
     private updateOrder = async () => { }
 
 
-    private setStatusOrder = async (req:Request, res: Response, next: NextFunction):Promise<void> => {
-        try{    
+    private setStatusOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { id } = req.params
             const company = this.getCompanyFromRequest(req)
-            const orderAtualizada = await this.OrdeService.setStatusOrder(req.body, company)
+            const orderAtualizada = await this.OrdeService.setStatusOrder(id, req.body, company)
 
-            res.status(200).json('atualizou aqui')
-        }catch(err){
+            res.status(200).json(
+                SuccessResponse(
+                    orderAtualizada,
+                    null,
+                    undefined,
+                    "update",
+                    "Status"
+                )
+            )
+        } catch (err) {
             next(err)
         }
     }

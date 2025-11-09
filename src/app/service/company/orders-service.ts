@@ -110,17 +110,20 @@ class orderService {
         }
     }
 
-    setStatusOrder = async (statusOrder: string, payloudCompany: myJwtPayload) => {
+    setStatusOrder = async (id: string, statusOrder: string, payloudCompany: myJwtPayload) => {
         try {
             //primeiro validação de entrada
             const statusValid: SetStatusSchemaOrder = await setStatusSchemaOrder.validate(statusOrder, {
                 abortEarly: false
             })
-   
             //Verificar se o produto que quero setar existe no banco se existir valido se o valor setado não é o mesmo que quero setar 
+            const result = await this.orderRepository.setStatusOrder(id, statusValid, payloudCompany)
 
-            const result = await this.orderRepository.setStatusOrder(statusValid, payloudCompany.id)
-
+            if (result === null) {
+                throw new ErrorExtension(
+                    409,
+                    "O status informado é igual ao atual. Nenhuma modificação foi feita.")
+            }
             //caso true retorno o valor para o controler da order atualiza porem apenas a indicação do status para o front 
             return result
 

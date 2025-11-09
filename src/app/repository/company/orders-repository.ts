@@ -109,15 +109,18 @@ class orderRepository {
             })
     }
 
-    async setStatusOrder(status:SetStatusSchemaOrder, company:string) {
+    async setStatusOrder(id:string, status:SetStatusSchemaOrder, company:myJwtPayload) {
         const resultStatus = await this.orderRepo
-        .createQueryBuilder()
+        .createQueryBuilder('order')
         .update(Order)
         .set({status:status.status}) 
-        .where("company.id = :id", {id:company})
-        .andWhere("status !== :status", {status})
+        .where("id = :id", {id})
+        .andWhere("status != :status", {status: status.status})
+        .andWhere("company.id = :id", {id:company.id})
         .execute()
 
+    
+        console.log(resultStatus)
         if(resultStatus.affected === 0) return null
         if(resultStatus) return true
     }
