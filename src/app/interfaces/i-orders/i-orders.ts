@@ -12,3 +12,8 @@ export interface IOrdersRegister {
     total: number;
     items: OrderItem[]
 }
+
+export interface IOrderSetStatus {
+    id:string;
+    status:string
+} 

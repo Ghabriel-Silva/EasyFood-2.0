@@ -4,6 +4,7 @@ import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import { SuccessResponse } from "../../utils/success-response";
 import { Order } from "../../entity/Order";
+import { IOrderSetStatus } from "../../interfaces/i-orders/i-orders";
 
 
 
@@ -58,7 +59,7 @@ class OrderControler {
         try {
             const { id } = req.params
             const company = this.getCompanyFromRequest(req)
-            const orderAtualizada = await this.OrdeService.setStatusOrder(id, req.body, company)
+            const orderAtualizada:IOrderSetStatus | undefined = await this.OrdeService.setStatusOrder(id, req.body, company)
 
             res.status(200).json(
                 SuccessResponse(

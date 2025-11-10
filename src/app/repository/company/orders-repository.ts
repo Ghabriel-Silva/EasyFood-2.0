@@ -7,7 +7,8 @@ import { OrderItem } from "../../entity/OrderItem"
 import { Company } from "../../entity/Company"
 import { toMoney } from "../../utils/money"
 import { Products } from "../../entity/Products"
-import {  SetStatusSchemaOrder } from "../../validations/company/order/set-status"
+import { SetStatusSchemaOrder } from "../../validations/company/order/set-status"
+import { IOrderSetStatus } from "../../interfaces/i-orders/i-orders"
 
 
 
@@ -109,20 +110,20 @@ class orderRepository {
             })
     }
 
-    async setStatusOrder(id:string, status:SetStatusSchemaOrder, company:myJwtPayload) {
+    async setStatusOrder(id: string, status: SetStatusSchemaOrder, company: myJwtPayload): Promise<IOrderSetStatus | null> {
         const resultStatus = await this.orderRepo
-        .createQueryBuilder('order')
-        .update(Order)
-        .set({status:status.status}) 
-        .where("id = :id", {id})
-        .andWhere("status != :status", {status: status.status})
-        .andWhere("company.id = :id", {id:company.id})
-        .execute()
+            .createQueryBuilder()
+            .update(Order)
+            .set({ status: status.status })
+            .where('id = :id', { id })
+            .andWhere('status != :status', { status: status.status })
+            .andWhere('company_id = :companyId', { companyId: company.id })
+            .execute();
 
-    
-        console.log(resultStatus)
-        if(resultStatus.affected === 0) return null
-        if(resultStatus) return true
+
+        return resultStatus.affected && resultStatus.affected > 0
+            ? { id: id, status: status.status }
+            : null
     }
 
 }

@@ -1,5 +1,5 @@
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth"
-import { IOrdersRegister } from "../../interfaces/i-orders/i-orders"
+import { IOrderSetStatus, IOrdersRegister } from "../../interfaces/i-orders/i-orders"
 import orderRepository from "../../repository/company/orders-repository"
 import * as yup from "yup";
 import ErrorExtension from "../../utils/error-extension";
@@ -110,27 +110,27 @@ class orderService {
         }
     }
 
-    setStatusOrder = async (id: string, statusOrder: string, payloudCompany: myJwtPayload) => {
+    setStatusOrder = async (id: string, statusOrder: string, payloudCompany: myJwtPayload): Promise<IOrderSetStatus | undefined> => {
         try {
             //primeiro validação de entrada
             const statusValid: SetStatusSchemaOrder = await setStatusSchemaOrder.validate(statusOrder, {
                 abortEarly: false
             })
             //Verificar se o produto que quero setar existe no banco se existir valido se o valor setado não é o mesmo que quero setar 
-            const result = await this.orderRepository.setStatusOrder(id, statusValid, payloudCompany)
-
-            if (result === null) {
+            const result: IOrderSetStatus | null = await this.orderRepository.setStatusOrder(id, statusValid, payloudCompany)
+            
+            if (result === null || !result) {
                 throw new ErrorExtension(
                     409,
-                    "O status informado é igual ao atual. Nenhuma modificação foi feita.")
+                    "Não foi possível atualizar o status do pedido.")
             }
-            //caso true retorno o valor para o controler da order atualiza porem apenas a indicação do status para o front 
             return result
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {
                 throw new ErrorExtension(400, err.errors.join(","))
             }
+            throw err
         }
 
 
