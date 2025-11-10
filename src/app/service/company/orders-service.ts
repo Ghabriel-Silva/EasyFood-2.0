@@ -8,8 +8,8 @@ import { Order } from "../../entity/Order";
 import { Company } from "../../entity/Company";
 import { toMoney } from "../../utils/money";
 import { Products } from "../../entity/Products";
-import { setStatusSchema } from "../../validations/company/product/set-status";
 import { SetStatusSchemaOrder, setStatusSchemaOrder } from "../../validations/company/order/set-status";
+import { FilterOrderSchema } from "../../validations/company/order/filter";
 
 
 
@@ -118,7 +118,7 @@ class orderService {
             })
             //Verificar se o produto que quero setar existe no banco se existir valido se o valor setado não é o mesmo que quero setar 
             const result: IOrderSetStatus | null = await this.orderRepository.setStatusOrder(id, statusValid, payloudCompany)
-            
+
             if (result === null || !result) {
                 throw new ErrorExtension(
                     409,
@@ -132,11 +132,11 @@ class orderService {
             }
             throw err
         }
-
-
-
     }
 
+    filterOrder = async (dataFilter:FilterOrderSchema, company:myJwtPayload) => {
+        
+    }
 
 
 }
