@@ -9,7 +9,7 @@ import { Company } from "../../entity/Company";
 import { toMoney } from "../../utils/money";
 import { Products } from "../../entity/Products";
 import { SetStatusSchemaOrder, setStatusSchemaOrder } from "../../validations/company/order/set-status";
-import { FilterOrderSchema } from "../../validations/company/order/filter";
+import { filterOrderSchema, FilterOrderSchema } from "../../validations/company/order/filter";
 
 
 
@@ -88,7 +88,8 @@ class orderService {
                 }
             }
 
-            // cria pedido  e  atualiza estoque em uma transação unica no banco de dado
+            // cria pedido  e  atualiza estoque em um
+
             const dataOrder: Order | null = await this.orderRepository.createOrder(
                 validateOrder,
                 payloudCompany,
@@ -134,8 +135,45 @@ class orderService {
         }
     }
 
-    filterOrder = async (dataFilter:FilterOrderSchema, company:myJwtPayload) => {
-        
+    filterOrder = async (dataFilter: FilterOrderSchema, company: myJwtPayload) => {
+        try {
+            const validadeFilterOrder = await filterOrderSchema.validate(dataFilter, {
+                abortEarly: false
+            })
+            let filtroDates: { start?: Date; end?: Date } = {}
+
+            //aqui tenho normatizar as datas e horarios para que a consulta seja feita corretamente
+            if (validadeFilterOrder.startDate && validadeFilterOrder.finalDate) {
+                const start: Date = new Date(validadeFilterOrder.startDate)
+                start.setHours(0, 0, 0, 0)
+
+                const end: Date = new Date(validadeFilterOrder.finalDate)
+                end.setHours(23, 59, 59, 999)
+
+                filtroDates = { start, end };
+            } else if (validadeFilterOrder.startDate) {
+                const start: Date = new Date(validadeFilterOrder.startDate)
+                start.setHours(0, 0, 0, 0)
+
+                const end: Date = new Date(validadeFilterOrder.startDate)
+                end.setHours(23, 59, 59, 999)
+
+                filtroDates = { start, end };
+            }
+
+
+            const orderFilterResul = await this.orderRepository.filterOrder(validadeFilterOrder, company, filtroDates)
+
+
+            return orderFilterResul
+
+        } catch (err) {
+            if (err instanceof yup.ValidationError) {
+                const mesagemUnicas = [...new Set(err.errors)]
+                throw new ErrorExtension(400, mesagemUnicas.join(","))
+            }
+            throw err
+        }
     }
 
 

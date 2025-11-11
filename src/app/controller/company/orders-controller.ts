@@ -6,6 +6,7 @@ import { SuccessResponse } from "../../utils/success-response";
 import { Order } from "../../entity/Order";
 import { IOrderSetStatus } from "../../interfaces/i-orders/i-orders";
 import { FilterOrderSchema } from "../../validations/company/order/filter";
+import ErrorExtension from "../../utils/error-extension";
 
 
 
@@ -19,19 +20,28 @@ class OrderControler {
         this.OrdeService = new orderService()
     }
     incializedRoutes() {
-        this.router.post('/filter', AuthenticateMidlleware, this.getOrder.bind(this)) //pega todos pedidos com com filtros ou sem 
+        this.router.post('/filter', AuthenticateMidlleware, this.filterOrder.bind(this)) //pega todos pedidos com com filtros ou sem 
         this.router.post('/', AuthenticateMidlleware, this.createOrder.bind(this)) //Cria uma pedido
         this.router.patch('/:id', AuthenticateMidlleware, this.updateOrder.bind(this)) //Edita um pedido parcialmente ou total
         this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusOrder.bind(this)) //seta apenas o status do pedido 'pendente', 'completado',
     }
 
-    private getOrder = async (req: Request, res: Response, next: NextFunction) => {
-        const dataFilter:FilterOrderSchema = req.body
-        const payloud = this.getCompanyFromRequest(req)
 
-        console.log(dataFilter)
 
-        const result = await this.OrdeService.filterOrder(dataFilter, payloud)
+    private filterOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const dataFilter: FilterOrderSchema = req.body
+            const payloud =  await this.getCompanyFromRequest(req)
+         
+            const result = await this.OrdeService.filterOrder(dataFilter, payloud)
+            console.log(result, 'chegou aqui')
+            res.status(200).json(
+                result
+            )
+
+        } catch (err) {
+            next(err)
+        }
     }
 
     private createOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -53,17 +63,17 @@ class OrderControler {
         }
 
     }
-    
-    
+
+
     private updateOrder = async () => { }
-    
-    
+
+
     private setStatusOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { id } = req.params
             const company = this.getCompanyFromRequest(req)
-            const orderAtualizada:IOrderSetStatus | undefined = await this.OrdeService.setStatusOrder(id, req.body, company)
-            
+            const orderAtualizada: IOrderSetStatus | undefined = await this.OrdeService.setStatusOrder(id, req.body, company)
+
             res.status(200).json(
                 SuccessResponse(
                     orderAtualizada,

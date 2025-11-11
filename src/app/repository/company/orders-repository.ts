@@ -1,6 +1,6 @@
-import { DeepPartial, Repository, In } from "typeorm"
+import { DeepPartial, Repository, In, Between } from "typeorm"
 import { AppDataSource } from "../../../database/dataSource"
-import { Order, OrderStatus } from "../../entity/Order"
+import { Order } from "../../entity/Order"
 import { CreateOrderSchema } from "../../validations/company/order/create"
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth"
 import { OrderItem } from "../../entity/OrderItem"
@@ -9,6 +9,7 @@ import { toMoney } from "../../utils/money"
 import { Products } from "../../entity/Products"
 import { SetStatusSchemaOrder } from "../../validations/company/order/set-status"
 import { IOrderSetStatus } from "../../interfaces/i-orders/i-orders"
+import { FilterOrderSchema } from "../../validations/company/order/filter"
 
 
 
@@ -31,7 +32,6 @@ class orderRepository {
         await queryRunner.startTransaction()
 
         try {
-            //  criando o molde do pedido
             const newOrder: Order = queryRunner.manager.create(Order, {
                 ...data as DeepPartial<Order>,
                 totalFreight: sumFreight,
@@ -125,6 +125,28 @@ class orderRepository {
             ? { id: id, status: status.status }
             : null
     }
+
+    async filterOrder(datafilter: FilterOrderSchema, company: myJwtPayload, filterDates: { start?: Date; end?: Date }) {
+        const where: any = {
+            company: {
+                id: company.id
+            }
+        }
+        if (filterDates.start && filterDates.end) {
+            where.created_at = Between(filterDates.start, filterDates.end);
+        } 
+
+        const orderFilter: Order[] = await this.orderRepo.find({
+            where,
+            relations: ['items']
+        })
+        console.log(orderFilter)
+        return orderFilter
+
+
+
+    }
+
 
 }
 
