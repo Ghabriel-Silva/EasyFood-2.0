@@ -14,6 +14,11 @@ export interface IOrdersRegister {
 }
 
 export interface IOrderSetStatus {
-    id:string;
-    status:string
-} 
+    id: string;
+    status: string
+}
+
+export interface IFilterOrder {
+    start?: Date,
+    end?: Date
+}

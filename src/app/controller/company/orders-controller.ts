@@ -31,12 +31,19 @@ class OrderControler {
     private filterOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const dataFilter: FilterOrderSchema = req.body
-            const payloud =  await this.getCompanyFromRequest(req)
-         
+            const payloud = await this.getCompanyFromRequest(req)
+
             const result = await this.OrdeService.filterOrder(dataFilter, payloud)
-            console.log(result, 'chegou aqui')
+
+
             res.status(200).json(
-                result
+                SuccessResponse(
+                    result,
+                    null,
+                    undefined,
+                    "fetch",
+                    "Pedido "
+                )
             )
 
         } catch (err) {

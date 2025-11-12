@@ -8,7 +8,7 @@ import { Company } from "../../entity/Company"
 import { toMoney } from "../../utils/money"
 import { Products } from "../../entity/Products"
 import { SetStatusSchemaOrder } from "../../validations/company/order/set-status"
-import { IOrderSetStatus } from "../../interfaces/i-orders/i-orders"
+import { IFilterOrder, IOrderSetStatus } from "../../interfaces/i-orders/i-orders"
 import { FilterOrderSchema } from "../../validations/company/order/filter"
 
 
@@ -126,25 +126,27 @@ class orderRepository {
             : null
     }
 
-    async filterOrder(datafilter: FilterOrderSchema, company: myJwtPayload, filterDates: { start?: Date; end?: Date }) {
+    async filterOrder(company: myJwtPayload, filterDates:IFilterOrder) {
         const where: any = {
             company: {
                 id: company.id
             }
+
         }
         if (filterDates.start && filterDates.end) {
             where.created_at = Between(filterDates.start, filterDates.end);
-        } 
-
+        }
+        console.log(where)
         const orderFilter: Order[] = await this.orderRepo.find({
             where,
-            relations: ['items']
+            relations: ['items', "items.product"]
         })
-        console.log(orderFilter)
+
+      
+        if(orderFilter.length === 0){
+            return null
+        }
         return orderFilter
-
-
-
     }
 
 

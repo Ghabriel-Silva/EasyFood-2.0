@@ -19,27 +19,24 @@ export const filterOrderSchema = yup.object({
 
     startDate: yup
         .date()
-        .transform((value, orginalvalue) => {
-            orginalvalue === "null" || orginalvalue === "" ? null : value
-        })
-        .typeError('Data inválida')
-        .nullable()
-        .notRequired(),
-
-    finalDate: yup
-        .date()
-        .transform((value, orginalvalue) => {
-            orginalvalue === "null" || orginalvalue === "" ? null : value
-        })
         .typeError('Data inválida')
         .nullable()
         .notRequired()
+        .transform((value, originalValue) => (originalValue ? new Date(originalValue) : null)),
+
+    finalDate: yup
+        .date()
+        .typeError('Data inválida')
+        .nullable()
+        .notRequired()
+        .transform((value, originalValue) => (originalValue ? new Date(originalValue) : null))
         .when('startDate', (startDate, schema) => {
-            if (startDate instanceof Date && !isNaN(startDate.getTime())) {
-                return schema.min(startDate, "A data Final não pode ser menor que a inicial");
+            if (startDate) {
+                return schema.min(startDate , "A data Final não pode ser menor que a inicial");
             }
             return schema;
         }),
+
 
     clientName: yup
         .string()

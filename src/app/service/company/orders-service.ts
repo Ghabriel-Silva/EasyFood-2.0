@@ -1,5 +1,5 @@
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth"
-import { IOrderSetStatus, IOrdersRegister } from "../../interfaces/i-orders/i-orders"
+import { IFilterOrder, IOrderSetStatus, IOrdersRegister } from "../../interfaces/i-orders/i-orders"
 import orderRepository from "../../repository/company/orders-repository"
 import * as yup from "yup";
 import ErrorExtension from "../../utils/error-extension";
@@ -137,12 +137,16 @@ class orderService {
 
     filterOrder = async (dataFilter: FilterOrderSchema, company: myJwtPayload) => {
         try {
+            if(!dataFilter.startDate && dataFilter.finalDate){
+                throw new ErrorExtension(400, "Por favor, informe a data inicial ao definir uma data final.")
+            }
             const validadeFilterOrder = await filterOrderSchema.validate(dataFilter, {
                 abortEarly: false
             })
-            let filtroDates: { start?: Date; end?: Date } = {}
 
-            //aqui tenho normatizar as datas e horarios para que a consulta seja feita corretamente
+            //Regra para filtrar as Datas 
+            let filtroDates: IFilterOrder = {} 
+            //aqui tenho normatizar as datas e horarios para que a consulta seja feita corretamente 
             if (validadeFilterOrder.startDate && validadeFilterOrder.finalDate) {
                 const start: Date = new Date(validadeFilterOrder.startDate)
                 start.setHours(0, 0, 0, 0)
@@ -161,8 +165,16 @@ class orderService {
                 filtroDates = { start, end };
             }
 
+            //Regra para filtra por Status
 
-            const orderFilterResul = await this.orderRepository.filterOrder(validadeFilterOrder, company, filtroDates)
+            const orderFilterResul = await this.orderRepository.filterOrder( company, filtroDates)
+
+            if(!orderFilterResul){
+                throw new ErrorExtension(
+                    404, 
+                    'Nenhum registro encontrado para os filtros informados.'
+                )
+            }
 
 
             return orderFilterResul
