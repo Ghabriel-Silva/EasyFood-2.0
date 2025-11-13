@@ -1,6 +1,6 @@
-import { DeepPartial, Repository, In, Between } from "typeorm"
+import { DeepPartial, Repository, In, Like } from "typeorm"
 import { AppDataSource } from "../../../database/dataSource"
-import { Order } from "../../entity/Order"
+import { Order, OrderStatus } from "../../entity/Order"
 import { CreateOrderSchema } from "../../validations/company/order/create"
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth"
 import { OrderItem } from "../../entity/OrderItem"
@@ -126,24 +126,31 @@ class orderRepository {
             : null
     }
 
-    async filterOrder(company: myJwtPayload, filterDates:IFilterOrder) {
+    async filterOrder(company: myJwtPayload, validadeFilterOrder: FilterOrderSchema) {
         const where: any = {
             company: {
                 id: company.id
             }
+        }
 
+        if (validadeFilterOrder.status?.length) {
+            where.status = In(validadeFilterOrder.status)
         }
-        if (filterDates.start && filterDates.end) {
-            where.created_at = Between(filterDates.start, filterDates.end);
+        if (validadeFilterOrder.paymentMethod?.length) {
+            where.paymentMethod = In(validadeFilterOrder.paymentMethod)
         }
+        // if (validadeFilterOrder.clientName) {
+        //     where.name = Like(`%${validadeFilterOrder.clientName}%`);
+        // }
         console.log(where)
+
         const orderFilter: Order[] = await this.orderRepo.find({
             where,
             relations: ['items', "items.product"]
         })
 
-      
-        if(orderFilter.length === 0){
+
+        if (orderFilter.length === 0) {
             return null
         }
         return orderFilter

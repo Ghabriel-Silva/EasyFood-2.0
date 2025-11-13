@@ -144,37 +144,10 @@ class orderService {
                 abortEarly: false
             })
 
-            //Regra para filtrar as Datas 
-            let filtroDates: IFilterOrder = {} 
-            //aqui tenho normatizar as datas e horarios para que a consulta seja feita corretamente 
-            if (validadeFilterOrder.startDate && validadeFilterOrder.finalDate) {
-                const start: Date = new Date(validadeFilterOrder.startDate)
-                start.setHours(0, 0, 0, 0)
 
-                const end: Date = new Date(validadeFilterOrder.finalDate)
-                end.setHours(23, 59, 59, 999)
+            const orderFilterResul = await this.orderRepository.filterOrder( company, validadeFilterOrder)
 
-                filtroDates = { start, end };
-            } else if (validadeFilterOrder.startDate) {
-                const start: Date = new Date(validadeFilterOrder.startDate)
-                start.setHours(0, 0, 0, 0)
-
-                const end: Date = new Date(validadeFilterOrder.startDate)
-                end.setHours(23, 59, 59, 999)
-
-                filtroDates = { start, end };
-            }
-
-            //Regra para filtra por Status
-
-            const orderFilterResul = await this.orderRepository.filterOrder( company, filtroDates)
-
-            if(!orderFilterResul){
-                throw new ErrorExtension(
-                    404, 
-                    'Nenhum registro encontrado para os filtros informados.'
-                )
-            }
+           
 
 
             return orderFilterResul
