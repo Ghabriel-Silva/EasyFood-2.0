@@ -147,7 +147,9 @@ class orderService {
 
             const orderFilterResul = await this.orderRepository.filterOrder( company, validadeFilterOrder)
 
-           
+           if(orderFilterResul === null){
+            throw new ErrorExtension(404, "Nenhum pedido encontrado para esse filtro")
+           }
 
 
             return orderFilterResul

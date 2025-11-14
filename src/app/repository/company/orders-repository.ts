@@ -126,29 +126,50 @@ class orderRepository {
             : null
     }
 
-    async filterOrder(company: myJwtPayload, validadeFilterOrder: FilterOrderSchema) {
-        const where: any = {
-            company: {
-                id: company.id
-            }
-        }
+    async filterOrder(company: myJwtPayload, validadeFilterOrder: FilterOrderSchema): Promise<Order[] | null> {
 
-        if (validadeFilterOrder.status?.length) {
-            where.status = In(validadeFilterOrder.status)
-        }
-        if (validadeFilterOrder.paymentMethod?.length) {
-            where.paymentMethod = In(validadeFilterOrder.paymentMethod)
-        }
-        // if (validadeFilterOrder.clientName) {
-        //     where.name = Like(`%${validadeFilterOrder.clientName}%`);
-        // }
-        console.log(where)
+        const query = this.orderRepo
+            .createQueryBuilder('order')
+            .leftJoinAndSelect("order.items", "items")
+            .leftJoin('order.company', "company")
 
-        const orderFilter: Order[] = await this.orderRepo.find({
-            where,
-            relations: ['items', "items.product"]
-        })
+        if (company.id) {
+            query.andWhere("company.id = :companyId", {
+                companyId: company.id
+            })
+        }
+        if (validadeFilterOrder.paymentMethod && validadeFilterOrder.paymentMethod.length > 0) {
+            query.andWhere("order.paymentMethod IN (:...paymentMethod)", {
+                paymentMethod: validadeFilterOrder.paymentMethod
+            })
+        }
+        if (validadeFilterOrder.status && validadeFilterOrder.status.length > 0) {
+            query.andWhere("order.status IN (:...statusList)", {
+                statusList: validadeFilterOrder.status
+            })
+        }
+        if (validadeFilterOrder.clientName) {
+            query.andWhere("LOWER(order.customerName) LIKE LOWER(:clientName)", {
+                clientName: `%${validadeFilterOrder.clientName}%`
+            })
+        }
+        
+        console.log(validadeFilterOrder.startDate)
+        if (validadeFilterOrder.startDate) {
+            const start = new Date(validadeFilterOrder.startDate);
+            start.setUTCHours(0, 0, 0, 0);
+            const end = new Date(validadeFilterOrder.startDate)
+            end.setUTCHours(23, 59, 59, 999)
 
+
+            query.andWhere("order.created_at BETWEEN :start AND :end", {
+                start,
+                end
+            });
+        }
+        console.log(query)
+
+        const orderFilter: Order[] = await query.getMany()
 
         if (orderFilter.length === 0) {
             return null
