@@ -137,19 +137,40 @@ class orderService {
 
     filterOrder = async (dataFilter: FilterOrderSchema, company: myJwtPayload) => {
         try {
-            if(!dataFilter.startDate && dataFilter.finalDate){
+            if (!dataFilter.startDate && dataFilter.finalDate) {
                 throw new ErrorExtension(400, "Por favor, informe a data inicial ao definir uma data final.")
             }
+            console.log(1)
             const validadeFilterOrder = await filterOrderSchema.validate(dataFilter, {
                 abortEarly: false
             })
+            console.log(2)
 
 
-            const orderFilterResul = await this.orderRepository.filterOrder( company, validadeFilterOrder)
+            let filterDate: IFilterOrder = {}
 
-           if(orderFilterResul === null){
-            throw new ErrorExtension(404, "Nenhum pedido encontrado para esse filtro")
-           }
+            if (dataFilter.startDate && dataFilter.finalDate) {
+
+                filterDate.start = new Date(dataFilter.startDate);
+                filterDate.start.setUTCHours(0, 0, 0, 0);
+
+                filterDate.end = new Date(dataFilter.finalDate);
+                filterDate.end.setUTCHours(23, 59, 59, 999);
+
+            } else if (dataFilter.startDate) {
+                filterDate.start = new Date(dataFilter.startDate);
+                filterDate.start.setUTCHours(0, 0, 0, 0);
+
+                filterDate.end = new Date(dataFilter.startDate);
+                filterDate.end.setUTCHours(23, 59, 59, 999);
+
+            }
+
+            const orderFilterResul = await this.orderRepository.filterOrder(company, validadeFilterOrder, filterDate)
+
+            if (orderFilterResul === null) {
+                throw new ErrorExtension(404, "Nenhum pedido encontrado para esse filtro")
+            }
 
 
             return orderFilterResul

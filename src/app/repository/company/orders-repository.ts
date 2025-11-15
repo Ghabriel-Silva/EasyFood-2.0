@@ -126,7 +126,7 @@ class orderRepository {
             : null
     }
 
-    async filterOrder(company: myJwtPayload, validadeFilterOrder: FilterOrderSchema): Promise<Order[] | null> {
+    async filterOrder(company: myJwtPayload, validadeFilterOrder: FilterOrderSchema, filterDate: IFilterOrder): Promise<Order[] | null> {
 
         const query = this.orderRepo
             .createQueryBuilder('order')
@@ -138,36 +138,32 @@ class orderRepository {
                 companyId: company.id
             })
         }
+        //filtra pelo meio de pagamento
         if (validadeFilterOrder.paymentMethod && validadeFilterOrder.paymentMethod.length > 0) {
             query.andWhere("order.paymentMethod IN (:...paymentMethod)", {
                 paymentMethod: validadeFilterOrder.paymentMethod
             })
         }
+        //Filtra pelas o status do pedido
         if (validadeFilterOrder.status && validadeFilterOrder.status.length > 0) {
             query.andWhere("order.status IN (:...statusList)", {
                 statusList: validadeFilterOrder.status
             })
         }
+        //filtra pelo nome do cliente
         if (validadeFilterOrder.clientName) {
             query.andWhere("LOWER(order.customerName) LIKE LOWER(:clientName)", {
                 clientName: `%${validadeFilterOrder.clientName}%`
             })
         }
         
-        console.log(validadeFilterOrder.startDate)
-        if (validadeFilterOrder.startDate) {
-            const start = new Date(validadeFilterOrder.startDate);
-            start.setUTCHours(0, 0, 0, 0);
-            const end = new Date(validadeFilterOrder.startDate)
-            end.setUTCHours(23, 59, 59, 999)
-
-
-            query.andWhere("order.created_at BETWEEN :start AND :end", {
-                start,
-                end
-            });
+        //Pega pela data
+        console.log('1')
+        if (filterDate.start && filterDate.end) {
+            query.andWhere("order.created_at BETWEEN :start AND :end", { start: filterDate.start, end: filterDate.end });
+        } else if (filterDate.start) {
+            query.andWhere("order.created_at BETWEEN :start AND :end", { start: filterDate.start, end: filterDate.end });
         }
-        console.log(query)
 
         const orderFilter: Order[] = await query.getMany()
 
