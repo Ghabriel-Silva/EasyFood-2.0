@@ -17,10 +17,10 @@ class ProductController {
     }
 
     private incializeRoutes() {
-        this.router.get('/', AuthenticateMidlleware, this.listProduct.bind(this))
-        this.router.post('/', AuthenticateMidlleware, this.createProduct.bind(this))
-        this.router.put('/:id', AuthenticateMidlleware, this.updateProduct.bind(this))
-        this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusProduct.bind(this))
+        this.router.get('/', AuthenticateMidlleware, this.listProduct)
+        this.router.post('/', AuthenticateMidlleware, this.createProduct)
+        this.router.put('/:id', AuthenticateMidlleware, this.updateProduct)
+        this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusProduct)
     }
 
     private createProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

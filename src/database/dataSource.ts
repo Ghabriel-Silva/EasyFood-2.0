@@ -11,6 +11,7 @@ dotenv.config()
 import { GenerateAllTables1760965347778 } from '../database/migrations/1760965347778-GenerateAllTables'
 import { EditeTablesCompanyOrder1762120085785 } from '../database/migrations/1762120085785-EditeTablesCompanyOrder'
 import { AddCollumOrderItem1762491862341 } from '../database/migrations/1762491862341-AddCollumOrderItem'
+import { AddColumnCategory1763381016818} from '../database/migrations/1763381016818-AddColumnCategory'
 
 
 
@@ -28,7 +29,8 @@ export const AppDataSource = new DataSource({
     migrations: [
         GenerateAllTables1760965347778,
         EditeTablesCompanyOrder1762120085785, 
-        AddCollumOrderItem1762491862341
+        AddCollumOrderItem1762491862341,  
+        AddColumnCategory1763381016818
     ],
     subscribers: [],
 })

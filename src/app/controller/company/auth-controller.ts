@@ -16,7 +16,7 @@ class AuthUser {
 
     private inicializeRoutes() {
         this.router.post('/login', this.loginUser.bind(this))
-        this.router.get('/info', AuthenticateMidlleware,  this.infoUser.bind(this))
+        this.router.get('/info', AuthenticateMidlleware,  this.infoUser)
     }
 
 

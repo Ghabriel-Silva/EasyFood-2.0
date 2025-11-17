@@ -1,4 +1,4 @@
-import { DeepPartial, Repository } from "typeorm"
+import {  Repository } from "typeorm"
 import { AppDataSource } from "../../../database/dataSource"
 
 import { OrderItem } from "../../entity/OrderItem"

@@ -20,10 +20,10 @@ class OrderControler {
         this.OrdeService = new orderService()
     }
     incializedRoutes() {
-        this.router.post('/filter', AuthenticateMidlleware, this.filterOrder.bind(this)) //pega todos pedidos com com filtros ou sem 
-        this.router.post('/', AuthenticateMidlleware, this.createOrder.bind(this)) //Cria uma pedido
-        this.router.patch('/:id', AuthenticateMidlleware, this.updateOrder.bind(this)) //Edita um pedido parcialmente ou total
-        this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusOrder.bind(this)) //seta apenas o status do pedido 'pendente', 'completado',
+        this.router.post('/filter', AuthenticateMidlleware, this.filterOrder) //pega todos pedidos com com filtros ou sem 
+        this.router.post('/', AuthenticateMidlleware, this.createOrder) //Cria uma pedido
+        this.router.patch('/:id', AuthenticateMidlleware, this.updateOrder) //Edita um pedido parcialmente ou total
+        this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusOrder) //seta apenas o status do pedido 'pendente', 'completado',
     }
 
 

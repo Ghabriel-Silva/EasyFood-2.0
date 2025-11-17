@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { Company } from "./Company";
-import {Products} from "./Products";
+import { Products } from "./Products";
 
 @Entity()
 export class Category {
@@ -9,6 +9,9 @@ export class Category {
 
     @Column()
     name: string;
+
+    @Column('boolean', { nullable: false, default: true })
+    status: boolean;
 
     @ManyToOne(() => Company, company => company.categories)
     @JoinColumn({ name: "company_id" })
