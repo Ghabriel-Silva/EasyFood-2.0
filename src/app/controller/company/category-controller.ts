@@ -2,6 +2,7 @@ import { NextFunction, Router, Response, Request } from "express";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import categoryService from "../../service/company/category-service";
 import { SuccessResponse } from "../../utils/success-response";
+import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
 
 
 class categoryController {
@@ -16,7 +17,7 @@ class categoryController {
 
     private inicializedRoutes() {
         this.router.get('/'),
-            this.router.post('/', this.createCategory),
+            this.router.post('/', AuthenticateMidlleware, this.createCategory),
             this.router.patch('/:id/status')
     }
 
@@ -24,6 +25,7 @@ class categoryController {
     private createCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const company: myJwtPayload = this.getcompanyFromRequest(req)
         const { name } = req.body
+        
 
         const result = await this.categoryService.createCategory(name, company)
 
