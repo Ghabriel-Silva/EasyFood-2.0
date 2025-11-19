@@ -3,6 +3,7 @@ import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import categoryService from "../../service/company/category-service";
 import { SuccessResponse } from "../../utils/success-response";
 import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
+import { ISetCategory } from "../../interfaces/i-category/i-cateegory";
 
 
 class categoryController {
@@ -18,29 +19,52 @@ class categoryController {
     private inicializedRoutes() {
         this.router.get('/'),
             this.router.post('/', AuthenticateMidlleware, this.createCategory),
-            this.router.patch('/:id/status')
+            this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusCategory)
     }
 
 
     private createCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        const company: myJwtPayload = this.getcompanyFromRequest(req)
-        const { name } = req.body
-        
+        try {
+            const company: myJwtPayload = this.getcompanyFromRequest(req)
+            const name = req.body
+            const result = await this.categoryService.createCategory(name, company)
 
-        const result = await this.categoryService.createCategory(name, company)
-
-        res.status(200).json(
-            SuccessResponse(
-                result,
-                null,
-                undefined,
-                "create",
-                "categoria"
+            res.status(200).json(
+                SuccessResponse(
+                    result,
+                    null,
+                    undefined,
+                    "create",
+                    "categoria"
+                )
             )
-        )
+        } catch (err) {
+            next(err)
+        }
     }
 
     private setStatusCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { id } = req.params
+            const status: string = req.body
+            const company = this.getcompanyFromRequest(req)
+
+            const result:ISetCategory | undefined = await this.categoryService.setStatusCategory(id, status, company)
+
+            res.status(200).json(
+                SuccessResponse(
+                    result,
+                    null,
+                    undefined,
+                    "update",
+                    "Status categoria"
+                )
+            )
+        } catch (err) {
+            next(err)
+        }
+
+
 
     }
 
