@@ -7,6 +7,7 @@ export const categoryValidationSchema = yup.object({
         .typeError("O a categoria  deve ser texto")
         .min(3, 'A categoria deve ter no minimo 3 caracteres')
         .max(100, 'A categoria deve ter até 100 caracteres')
+        .required()
 })
 
 export type CategoryValidationSchema = yup.InferType<typeof categoryValidationSchema>

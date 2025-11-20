@@ -2,9 +2,7 @@ import { Repository } from "typeorm";
 import { Category } from "../../entity/Category";
 import { AppDataSource } from "../../../database/dataSource";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
-import { compareAsc } from "date-fns";
 import { CategoryValidationSchema } from "../../validations/company/category/create";
-import { SetStatusSchemaValidation } from "../../validations/company/category/set-status";
 import { ISetCategory } from "../../interfaces/i-category/i-cateegory";
 
 
@@ -34,7 +32,7 @@ class categoryRepository {
   }
 
 
-  setStatus = async (id: string, status: boolean, company: myJwtPayload):Promise<ISetCategory | null> => {
+  setStatus = async (id: string, status: boolean, company: myJwtPayload): Promise<ISetCategory | null> => {
     const newStatus = await this.categoryRepo
       .createQueryBuilder()
       .update(Category)
@@ -44,12 +42,35 @@ class categoryRepository {
       .andWhere("company_id = :company_id", { company_id: company.id })
       .execute()
 
-    return newStatus.affected && newStatus.affected > 0 
-    ? {id:id, status:status}
-    :null
+    return newStatus.affected && newStatus.affected > 0
+      ? { id: id, status: status }
+      : null
   }
 
 
+  updateNameExist = async (idCategory: string): Promise<Category | null> => {
+    const existCategory = await this.categoryRepo.findOne({
+      where: {
+        id: idCategory,
+      },
+      relations: ['company']
+    })
+
+    return existCategory
+  }
+
+  updateName = async (fieldsUpdate: CategoryValidationSchema, idCategory: string): Promise<Category | null> => {
+    await this.categoryRepo.update(
+      { id: idCategory },
+      { name: fieldsUpdate.name }
+    )
+
+    const updatedCategory = await this.categoryRepo.findOne({
+      where: { id: idCategory },
+    });
+
+    return updatedCategory
+  }
 }
 
 export default categoryRepository

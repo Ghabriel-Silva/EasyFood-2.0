@@ -4,6 +4,7 @@ import categoryService from "../../service/company/category-service";
 import { SuccessResponse } from "../../utils/success-response";
 import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
 import { ISetCategory } from "../../interfaces/i-category/i-cateegory";
+import { Category } from "../../entity/Category";
 
 
 class categoryController {
@@ -20,6 +21,7 @@ class categoryController {
         this.router.get('/'),
             this.router.post('/', AuthenticateMidlleware, this.createCategory),
             this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusCategory)
+        this.router.put('/:id', AuthenticateMidlleware, this.updateName)
     }
 
 
@@ -49,7 +51,7 @@ class categoryController {
             const status: string = req.body
             const company = this.getcompanyFromRequest(req)
 
-            const result:ISetCategory | undefined = await this.categoryService.setStatusCategory(id, status, company)
+            const result: ISetCategory | undefined = await this.categoryService.setStatusCategory(id, status, company)
 
             res.status(200).json(
                 SuccessResponse(
@@ -63,10 +65,32 @@ class categoryController {
         } catch (err) {
             next(err)
         }
-
-
-
     }
+
+    private updateName = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const newName: string = req.body
+            const { id } = req.params
+            console.log(id)
+
+            const company = this.getcompanyFromRequest(req)
+
+            const result: Category = await this.categoryService.updateName(newName, id, company)
+
+            res.status(200).json(
+                SuccessResponse(
+                    result,
+                    null,
+                    undefined,
+                    "update",
+                    "Nome da categoria"
+                )
+            )
+        } catch (err) {
+            next(err)
+        }
+    }
+
 
     private getCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
