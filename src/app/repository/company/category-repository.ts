@@ -4,6 +4,8 @@ import { AppDataSource } from "../../../database/dataSource";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import { CategoryValidationSchema } from "../../validations/company/category/create";
 import { ISetCategory } from "../../interfaces/i-category/i-cateegory";
+import { SetStatusSchemaOrder } from "../../validations/company/order/set-status";
+import { SetStatusSchemaValidation } from "../../validations/company/category/set-status";
 
 
 class categoryRepository {
@@ -70,6 +72,16 @@ class categoryRepository {
     });
 
     return updatedCategory
+  }
+
+
+  getStatus = async (status: boolean | undefined, company: myJwtPayload) => {
+    return await this.categoryRepo.find({
+      where: status !== undefined
+        ? { status, company: { id: company.id } } 
+        : { company: { id: company.id } }        
+    });
+
   }
 }
 

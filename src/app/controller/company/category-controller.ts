@@ -5,6 +5,7 @@ import { SuccessResponse } from "../../utils/success-response";
 import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
 import { ISetCategory } from "../../interfaces/i-category/i-cateegory";
 import { Category } from "../../entity/Category";
+import { SetStatusSchemaValidation } from "../../validations/company/category/set-status";
 
 
 class categoryController {
@@ -18,7 +19,7 @@ class categoryController {
     }
 
     private inicializedRoutes() {
-        this.router.get('/'),
+        this.router.get('/', AuthenticateMidlleware, this.getCategory),
             this.router.post('/', AuthenticateMidlleware, this.createCategory),
             this.router.patch('/:id/status', AuthenticateMidlleware, this.setStatusCategory)
         this.router.put('/:id', AuthenticateMidlleware, this.updateName)
@@ -93,7 +94,21 @@ class categoryController {
 
 
     private getCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const  status:SetStatusSchemaValidation  = req.query 
+        console.log(status)
+        const company = this.getcompanyFromRequest(req)
 
+
+        const result = await this.categoryService.getCategory(status, company)
+        res.status(200).json(
+            SuccessResponse(
+                result,
+                null,
+                undefined,
+                "fetch",
+                "Status "
+            )
+        )
     }
 
     private getcompanyFromRequest(req: Request): myJwtPayload {

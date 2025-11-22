@@ -73,7 +73,6 @@ class categoryService {
                 abortEarly: false
             })
 
-
             //validar se oque estou mandando igual ao anterior 
             const updateNameExist: Category | null = await this.categoyRepository.updateNameExist(idCategory)
             console.log(updateNameExist)
@@ -122,8 +121,23 @@ class categoryService {
         }
     }
 
-    getCategory = async () => {
+    getCategory = async (status: SetStatusSchemaValidation, company: myJwtPayload) => {
         try {
+            const validatationStatus: SetStatusSchemaValidation = await setStatusSchemaValidation.validate(status, {
+                abortEarly: false
+            })
+            const convertStatus: boolean | undefined = validatationStatus.status === 'active' ? true : validatationStatus.status === 'inactive' ? false : undefined
+
+            const categoryStatus = await this.categoyRepository.getStatus(convertStatus, company)
+
+            if (categoryStatus === null) {
+                throw new ErrorExtension(
+                    400,
+                    "Nenhuma categoria encontrada"
+                )
+            }
+
+            return categoryStatus
 
         }
         catch (err) {
