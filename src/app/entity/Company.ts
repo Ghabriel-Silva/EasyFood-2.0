@@ -36,7 +36,6 @@ export class Company {
     @Column('decimal', { precision: 10, scale: 2, default: 0 })
     defaultFreight: number; //frete padrao 
 
-    
 
     @OneToMany(() => Products, products => products.company)
     products: Products[];
