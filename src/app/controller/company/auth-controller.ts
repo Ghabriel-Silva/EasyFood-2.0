@@ -28,7 +28,7 @@ class AuthUser {
                     SuccessResponse<ILoginResponse>(
                         data,
                         null,
-                        `Bem vindo ${data.user.name}`
+                        `Bem vindo de novo ${data.user.name}`
                     )
                 )
             }
