@@ -17,7 +17,7 @@ app.use(httpErrorMiddleware)
 AppDataSource.initialize().then(()=>{
     console.log('data base Started!')
 
-    app.listen(3000, ()=>{
+    app.listen(8080, ()=>{
         console.log('Server Started!')
     })
 
