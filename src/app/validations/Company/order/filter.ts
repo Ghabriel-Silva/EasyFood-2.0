@@ -37,7 +37,6 @@ export const filterOrderSchema = yup.object({
             return schema
         }),
 
-
     clientName: yup
         .string()
         .typeError('O nome dever ser apenas letras')

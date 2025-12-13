@@ -53,14 +53,18 @@ export const createOrderSchema = yup.object({
         .positive('O valor de desconto deve ser positivo')
         .notRequired(),
 
+    observations: yup
+        .string()
+        .max(600, 'O endereço deve ter no máximo 200 caracteres')
+        .notRequired(),
     items: yup
         .array()
         .of(
             yup.object({
                 name: yup
-                .string()
-                .required('O nome do produto é obrigatório'),
-                
+                    .string()
+                    .required('O nome do produto é obrigatório'),
+
                 product_id: yup
                     .string()
                     .required('O produto é obrigatório'),

@@ -15,8 +15,8 @@ class AuthUser {
     }
 
     private inicializeRoutes() {
-        this.router.post('/login', this.loginUser.bind(this))
-        this.router.get('/info', AuthenticateMidlleware,  this.infoUser)
+        this.router.post('/login', this.loginUser)
+        this.router.get('/me', AuthenticateMidlleware, this.infoUser)
     }
 
 
@@ -24,9 +24,15 @@ class AuthUser {
         try {
             const data = await this.userAuthService.login(req.body)
             if (data) {
+                res.cookie("token", data.token, {
+                    httpOnly: true,
+                    secure: false, // DEVE estar true em produção (https)
+                    sameSite: "lax",
+                    maxAge: 3600000, // 1 hora
+                });
                 res.status(201).json(
                     SuccessResponse<ILoginResponse>(
-                        data,
+                        null,
                         null,
                         `Bem vindo de novo ${data.user.name}`
                     )
@@ -37,12 +43,13 @@ class AuthUser {
         }
     }
 
-    private infoUser = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+    private infoUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            res.status(200).json(
-                "oi"
-            )
-        } catch(erro) {
+            res.json({
+                authenticated: true,
+                user: req.user
+            });
+        } catch (erro) {
             next(erro)
         }
     }

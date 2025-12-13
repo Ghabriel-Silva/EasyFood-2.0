@@ -14,9 +14,9 @@ declare global {
 }
 
 const AuthenticateMidlleware = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization || ""
-    const auth = new Auth()
 
+    const auth = new Auth()
+    const token =req.cookies.token || req.headers.authorization?.replace("Bearer ", "")
     if (!token) {
         throw new ErrorExtension(404, 'Token não encontrado!')
     }

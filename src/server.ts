@@ -5,23 +5,30 @@ import cors from 'cors'
 import 'express-async-errors'
 import httpErrorMiddleware from "./app/middlewares/error-middleware"
 import routers from "./app/routes"
+import cookieParser from "cookie-parser";
+
 
 const app = express()
 app.use(express.json())
-app.use(cors())
+app.use(cookieParser());
+
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+}))
 
 app.use(routers)
 
 app.use(httpErrorMiddleware)
 
-AppDataSource.initialize().then(()=>{
+AppDataSource.initialize().then(() => {
     console.log('data base Started!')
 
-    app.listen(8080, ()=>{
+    app.listen(8080, () => {
         console.log('Server Started!')
     })
 
 
-}).catch((err)=>{
+}).catch((err) => {
     console.log("Error during Data Source initialization:", err)
 })

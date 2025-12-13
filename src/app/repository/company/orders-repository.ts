@@ -131,6 +131,7 @@ class orderRepository {
         const query = this.orderRepo
             .createQueryBuilder('order')
             .leftJoinAndSelect("order.items", "items")
+            .leftJoinAndSelect("items.product", "product")
             .leftJoin('order.company', "company")
 
         if (company.id) {

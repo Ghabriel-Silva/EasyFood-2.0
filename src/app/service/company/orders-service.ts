@@ -135,17 +135,16 @@ class orderService {
         }
     }
 
-    filterOrder = async (dataFilter: FilterOrderSchema, company: myJwtPayload) => {
+    filterOrder = async (dataFilter: FilterOrderSchema, company: myJwtPayload):Promise<Order[]> => {
         try {
             if (!dataFilter.startDate && dataFilter.finalDate) {
                 throw new ErrorExtension(400, "Por favor, informe a data inicial ao definir uma data final.")
             }
-            console.log(1)
+        
             const validadeFilterOrder = await filterOrderSchema.validate(dataFilter, {
                 abortEarly: false
             })
-            console.log(2)
-
+        
 
             let filterDate: IFilterOrder = {}
 

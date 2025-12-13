@@ -64,6 +64,11 @@ export class Order {
     @Column("decimal", { precision: 10, scale: 2, default: 0 })
     total: number;
 
+    @Column('text', {
+        nullable:true,
+    })
+    observations?:string;
+
     @ManyToOne(() => Company, company => company.orders)
     @JoinColumn({ name: "company_id" })
     company: Company;

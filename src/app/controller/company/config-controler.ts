@@ -18,23 +18,17 @@ class configController {
 
     inicializedRoutes() {
         this.router.get('/')
-        this.router.patch('/', AuthenticateMidlleware,  this.UpdateInfoCompany)
+        this.router.patch('/', AuthenticateMidlleware, this.UpdateInfoCompany)
 
     }
 
-    private getInfoCompany = async (req: Request, res: Response, next: NextFunction) => {
-        try {
+    
 
-        } catch (err) {
-            next(err)
-        }
-    }
-
-    private UpdateInfoCompany = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+    private UpdateInfoCompany = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const company = this.getCompanyFromRequest(req)
             const result = await this.configCompanyService.UpdateInfoCompany(req.body, company)
-
+           
             res.status(200).json(
                 SuccessResponse(
                     result,

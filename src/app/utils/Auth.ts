@@ -25,9 +25,6 @@ class Auth {
         if (!token) {
             throw new ErrorExtension(401, "Token não encontrado!")
         }
-        if(token.startsWith("Bearer ")){
-            token = token.replace("Bearer ", "")
-        }
         try {
             const validateJwt:myJwtPayload  = Jwt.verify(token, SECRET) as myJwtPayload
             return validateJwt
