@@ -13,6 +13,7 @@ import { EditeTablesCompanyOrder1762120085785 } from '../database/migrations/176
 import { AddCollumOrderItem1762491862341 } from '../database/migrations/1762491862341-AddCollumOrderItem'
 import { AddColumnCategory1763381016818 } from '../database/migrations/1763381016818-AddColumnCategory'
 import { CreateCollunToOrder1765649217086 } from '../database/migrations/1765649217086-CreateCollunToOrder'
+import {CreateColumnsUniAndDeleivery1766270516114} from '../database/migrations/1766270516114-CreateColumnsUniAndDeleivery'
 
 
 
@@ -32,7 +33,8 @@ export const AppDataSource = new DataSource({
         EditeTablesCompanyOrder1762120085785,
         AddCollumOrderItem1762491862341,
         AddColumnCategory1763381016818,
-        CreateCollunToOrder1765649217086
+        CreateCollunToOrder1765649217086, 
+        CreateColumnsUniAndDeleivery1766270516114 //Criando coluna de unidade de medida e delivery
     ],
     subscribers: [],
 })

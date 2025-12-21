@@ -3,6 +3,19 @@ import { Category } from "./Category";
 import { OrderItem } from "./OrderItem";
 import { Company } from "./Company";
 
+export enum UniMedida {
+    KILO = "kg",
+    GRAMA = "g",
+    LITRO = "l",
+    UNIDADE = "un",
+    PORCAO = "porcao",
+    FATIA = "fatia",
+    PEDACO = "pedaco",
+    COMBO = "combo",
+    NONE = "none",
+}
+
+
 @Entity()
 export class Products {
     @PrimaryGeneratedColumn('uuid')
@@ -28,6 +41,13 @@ export class Products {
 
     @Column({ nullable: true })
     category_id: string;
+
+    @Column({
+        type: "enum",
+        enum: UniMedida,
+        default: UniMedida.NONE
+    })
+    uni_medida:UniMedida
 
     @ManyToOne(() => Company, company => company.products)
     @JoinColumn({ name: "company_id" })

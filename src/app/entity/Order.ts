@@ -17,6 +17,11 @@ export enum PaymentMethod {
     OTHER = "Outros"
 }
 
+export enum DeliveryMethod {
+    DELIVERY = "delivery",
+    PICKUP = "pickup",
+    DINE_IN = "dine_in"
+}
 
 @Entity("orders")
 export class Order {
@@ -52,8 +57,8 @@ export class Order {
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
     customFreight: number;
 
-    @Column({type:'decimal', precision:10, scale:2, default:0})
-    totalFreight:number
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    totalFreight: number
 
     @Column('decimal', { precision: 10, scale: 2, default: 0 })
     additionalValue?: number
@@ -65,10 +70,18 @@ export class Order {
     total: number;
 
     @Column('text', {
-        nullable:true,
+        nullable: true,
     })
-    observations?:string;
+    observations?: string;
 
+    @Column({
+        type: "enum",
+        enum: DeliveryMethod,
+        default: DeliveryMethod.DELIVERY
+    })
+    delivery_method:DeliveryMethod
+
+    
     @ManyToOne(() => Company, company => company.orders)
     @JoinColumn({ name: "company_id" })
     company: Company;

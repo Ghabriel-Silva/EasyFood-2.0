@@ -8,7 +8,7 @@ const httpErrorMiddleware = (err: Error, req: Request, res: Response, next: Next
             statusCode: err.status,
             message: err.message
         })
-    }
+    } 
     // fallback para qualquer erro que não seja ErrorExtension
 
     return res.status(500).json({
