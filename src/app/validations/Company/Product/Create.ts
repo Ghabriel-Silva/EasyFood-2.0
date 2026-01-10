@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { UniMedida } from '../../../entity/Products';
 
 export const productCreateSchema = yup.object({
   name: yup.string().required('O nome do produto é obrigatório'),
@@ -12,6 +13,12 @@ export const productCreateSchema = yup.object({
     .integer('A quantidade deve ser um número inteiro')
     .min(0, 'A quantidade não pode ser negativa')
     .notRequired(),
+  uni_medida: yup
+    .mixed<UniMedida>()
+    .oneOf(Object.values(UniMedida), "Unidade invalida, defina um valor: ['Pendente,Preparando,Completo,Entregue,Cancelado'] ")
+    .required("Unidade De medida é obrigatório"),
+
+
   expirationDate: yup.date().typeError('Data inválida').notRequired(),
   description: yup.string().notRequired(),
   category_id: yup.string().required('Categoria é obrigatório'),

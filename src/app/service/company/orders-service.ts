@@ -146,7 +146,7 @@ class orderService {
             })
         
 
-            let filterDate: IFilterOrder = {}
+            let filterDate: IFilterOrder = {} //Para ordernação
 
             if (dataFilter.startDate && dataFilter.finalDate) {
 

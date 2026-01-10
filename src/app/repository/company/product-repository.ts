@@ -24,6 +24,7 @@ export class ProductRepository {
             expirationDate: data.expirationDate ?? undefined,
             description: data.description ?? undefined,
             isAvailable: true,
+            uni_medida: data.uni_medida ?? undefined,
             company: { id: user.id },
             category: data.category_id ? { id: data.category_id } : undefined,
         }) //?? undefined garante que, se o valor for null ou undefined, o campo será omitido, que é exatamente o que o TypeORM espera
@@ -101,7 +102,7 @@ export class ProductRepository {
         if (filters.status === 'active') where.isAvailable = true
         else if (filters.status === 'desactivated') where.isAvailable = false
 
-        const products:Products[] = await this.productRepository.find({
+        const products: Products[] = await this.productRepository.find({
             where,
             order
         })

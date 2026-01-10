@@ -50,7 +50,7 @@ export const createOrderSchema = yup.object({
     discountValue: yup
         .number()
         .typeError('O valor de desconto deve ser um número')
-        .positive('O valor de desconto deve ser positivo')
+        .min(0, 'O valor de desconto deve ser positivo')
         .notRequired(),
 
     observations: yup
@@ -71,12 +71,16 @@ export const createOrderSchema = yup.object({
 
                 quantity: yup
                     .number()
+                   
                     .integer('A quantidade deve ser um número inteiro')
                     .min(1, 'A quantidade deve ser no mínimo 1')
                     .required('A quantidade é obrigatória'),
 
                 price: yup
                     .number()
+                    .transform((_, originalValue) =>
+                        originalValue === "" ? undefined : Number(originalValue)
+                    )
                     .typeError('O preço deve ser um número')
                     .positive('O preço deve ser positivo')
                     .required('O preço é obrigatório'),

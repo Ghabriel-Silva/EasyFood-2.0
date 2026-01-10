@@ -1,10 +1,13 @@
+import { UniMedida } from "../../entity/Products";
+
 export interface IProduct {
     name: string;
     price: number;
     quantity?: number | null;
     expirationDate?: Date | null;
     description?: string | null;
-    category_id: string ;
+    category_id: string;
+    uni_medida?: UniMedida
 }
 
 
@@ -34,15 +37,15 @@ export interface IProductUpdate {
     quantity?: number | null;
     expirationDate?: Date | null;
     description?: string | null;
-    category_id?: string ;
+    category_id?: string;
 }
 
 export interface IProductStatus {
-    id:string;
+    id: string;
     isAvailable: boolean;
-} 
+}
 
 export interface IProductsReturn {
-    data:IProduct[]
-    fromCache:boolean
+    data: IProduct[]
+    fromCache: boolean
 }

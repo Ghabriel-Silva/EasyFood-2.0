@@ -22,14 +22,14 @@ export const filterOrderSchema = yup.object({
         .typeError('Data inválida')
         .nullable()
         .notRequired()
-        .transform((value, originalValue) => (originalValue ? new Date(originalValue) : null)),
+        .transform((_, originalValue) => (originalValue ? new Date(originalValue) : null)),
 
     finalDate: yup
         .date()
         .typeError('Data inválida')
         .nullable()
         .notRequired()
-        .transform((value, originalValue) => (originalValue ? new Date(originalValue) : null))
+        .transform((_, originalValue) => (originalValue ? new Date(originalValue) : null))
         .when('startDate', (startDate: any, schema: any) => {
             if (startDate instanceof Date && !isNaN(startDate.getTime())) {
                 return schema.min(startDate, "A data final não pode ser menor que a inicial")
