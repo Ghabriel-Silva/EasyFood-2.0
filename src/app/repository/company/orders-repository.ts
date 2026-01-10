@@ -129,10 +129,11 @@ class orderRepository {
     async filterOrder(company: myJwtPayload, validadeFilterOrder: FilterOrderSchema, filterDate: IFilterOrder): Promise<Order[] | null> {
 
         const query = this.orderRepo
-            .createQueryBuilder('order')
-            .leftJoinAndSelect("order.items", "items")
-            .leftJoinAndSelect("items.product", "product")
+            .createQueryBuilder('order') //Pega todos pedidos da compania
+            .leftJoinAndSelect("order.items", "items")  //{order.items = items}
+            .leftJoinAndSelect("items.product", "product") //{order.items.products }
             .leftJoin('order.company', "company")
+            .orderBy('order.created_at', 'DESC')
 
         if (company.id) {
             query.andWhere("company.id = :companyId", {
@@ -159,7 +160,6 @@ class orderRepository {
         }
         
         //Pega pela data
-        console.log('1')
         if (filterDate.start && filterDate.end) {
             query.andWhere("order.created_at BETWEEN :start AND :end", { start: filterDate.start, end: filterDate.end });
         } else if (filterDate.start) {
