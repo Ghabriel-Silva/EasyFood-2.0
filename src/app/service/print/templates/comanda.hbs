@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        body {
+            font-family: monospace;
+            font-size: 15px;
+            width: 80mm;
+            margin: 0;
+            padding: 5mm;
+            color: #000;
+            text-transform: uppercase;
+        }
+
+        h2,
+        h3 {
+            text-align: center;
+            margin: 6px 0;
+        }
+
+        p {
+            margin: 3px 0;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px dashed #000;
+            margin: 10px 0;
+        }
+
+        @media print {
+            @page {
+                margin: 0;
+            }
+        }
+
+        @media screen {
+            body {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <h2>{{company}}</h2>
+    <h3>COMANDA</h3>
+
+    <p class="center bold">PEDIDO Nº {{id}}</p>
+
+    <hr>
+
+    <!-- DADOS -->
+    <p><span class="bold">DATA:</span> {{createdAt}}</p>
+    <p><span class="bold">MESA:</span> {{mesa}}</p>
+    <p><span class="bold">STATUS:</span> {{status}}</p>
+    <p><span class="bold">PAGAMENTO:</span> {{pagamento}}</p>
+
+    <p><span class="bold">CLIENTE:</span> {{cliente}}</p>
+    <p><span class="bold">TEL:</span> {{telefone}}</p>
+    <p><span class="bold">ENDEREÇO:</span> {{endereco}}</p>
+
+    <hr>
+
+    <!-- ITENS -->
+    <p class="bold center">ITENS</p>
+
+    {{#each itens}}
+    <div class="row">
+        <span>{{qtd}}x {{nome}}</span>
+        <span>R$ {{totalItem}}</span>
+    </div>
+    {{/each}}
+
+    <hr>
+
+    <!-- TOTAIS -->
+    {{#if frete}}
+    <div class="row">
+        <span>FRETE</span>
+        <span>R$ {{frete}}</span>
+    </div>
+    {{/if}}
+
+    {{#if adicional}}
+    <div class="row">
+        <span>ADICIONAL</span>
+        <span>R$ {{adicional}}</span>
+    </div>
+    {{/if}}
+
+    {{#if desconto}}
+    <div class="row">
+        <span>DESCONTO</span>
+        <span>- R$ {{desconto}}</span>
+    </div>
+    {{/if}}
+
+    <hr>
+
+    <div class="row bold">
+        <span>TOTAL</span>
+        <span>R$ {{total}}</span>
+    </div>
+
+    {{#if observacoes}}
+    <hr>
+    <p class="bold">OBS:</p>
+    <p>{{observacoes}}</p>
+    {{/if}}
+
+    <hr>
+
+    <p class="center bold">OBRIGADO!</p>
+
+    <script>
+        window.onload = () => {
+            window.print()
+            window.onafterprint = () => {
+                window.close()
+            }
+        }
+    </script>
+
+</body>
+
+</html>

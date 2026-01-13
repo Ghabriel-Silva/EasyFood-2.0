@@ -158,7 +158,7 @@ class orderRepository {
                 clientName: `%${validadeFilterOrder.clientName}%`
             })
         }
-        
+
         //Pega pela data
         if (filterDate.start && filterDate.end) {
             query.andWhere("order.created_at BETWEEN :start AND :end", { start: filterDate.start, end: filterDate.end });
@@ -172,6 +172,22 @@ class orderRepository {
             return null
         }
         return orderFilter
+    }
+
+    async printOrderId(orderId: string, idCompany:myJwtPayload): Promise<Order | null> {
+        return this.orderRepo.findOne({
+            where: { id: orderId ,
+            company: {
+                id: idCompany.id
+            }
+            }, 
+            relations: [
+                'company',
+                'items',
+                'items.product'
+                
+            ]
+        })
     }
 
 

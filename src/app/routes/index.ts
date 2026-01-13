@@ -5,6 +5,7 @@ import productsRoutes from "../controller/company/product-controller";
 import orderRouters from "../controller/company/orders-controller";
 import categoryRoutes from "../controller/company/category-controller";
 import configCompanyRoutes from "../controller/company/config-controler";
+import printComande from "../controller/company/print-controller";
 
 const routers = Router()
 
@@ -14,5 +15,7 @@ routers.use('/product', productsRoutes)
 routers.use('/order', orderRouters )
 routers.use('/category', categoryRoutes)
 routers.use('/config', configCompanyRoutes)
+routers.use('/print', printComande)
+
 
 export default routers
