@@ -13,6 +13,11 @@ export class Category {
     @Column('boolean', { nullable: false, default: true })
     status: boolean;
 
+    @Column('boolean',{
+        default:false, 
+    })
+    is_default:boolean
+
     @ManyToOne(() => Company, company => company.categories)
     @JoinColumn({ name: "company_id" })
     company: Company;
