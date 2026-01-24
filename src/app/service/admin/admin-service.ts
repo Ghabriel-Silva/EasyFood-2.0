@@ -44,4 +44,4 @@ export class AdminService {
             throw err; 
         }
     }
-};
+}

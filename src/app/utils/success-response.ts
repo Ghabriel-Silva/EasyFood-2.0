@@ -19,8 +19,8 @@ export const SuccessResponse = <T>(
         data,
     }
 }
-export const ErrorResponse = (mesage:string, code=400)=>({
+export const ErrorResponse = (message:string, code:number)=>({
     status:'error',
-    mesage, 
+    message, 
     code,
 })

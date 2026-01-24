@@ -1,3 +1,4 @@
+import { Company } from "../../entity/Company";
 import { UniMedida } from "../../entity/Products";
 
 export interface IProduct {
@@ -47,5 +48,8 @@ export interface IProductStatus {
 
 export interface IProductsReturn {
     data: IProduct[]
+    frete?:Company
     fromCache: boolean
 }
+
+

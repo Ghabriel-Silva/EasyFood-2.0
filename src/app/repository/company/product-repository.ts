@@ -2,8 +2,9 @@ import { Repository } from "typeorm";
 import { Products } from "../../entity/Products";
 import { AppDataSource } from "../../../database/dataSource";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
-import { IProduct, IProductStatus } from "../../interfaces/i-product/i-product";
+import { IProduct, IProductsReturn, IProductStatus } from "../../interfaces/i-product/i-product";
 import { listSchema } from "../../validations/company/product/list";
+import { Company } from "../../entity/Company";
 
 
 
@@ -88,12 +89,22 @@ export class ProductRepository {
 
         return { id, isAvailable: setStatus }
     }
+    async getCompanyFrete(company: myJwtPayload) {
+        return await AppDataSource
+            .getRepository(Company)
+            .createQueryBuilder('company')
+            .select(['company.defaultFreight'])
+            .where("company.id = :id", { id: company.id })
+            .getOne()
+    }
 
+    async listProduct(filters: listSchema, company: myJwtPayload): Promise<IProductsReturn> {
+        const frete: Company | null = await this.getCompanyFrete(company)
 
-    async listProduct(filters: listSchema, company: myJwtPayload): Promise<Products[]> {
         const order: Record<string, 'ASC' | 'DESC'> = {}
         const where: any = {
             company: { id: company.id }
+
         }
 
         if (filters.price === 'maior') order.price = 'DESC'
@@ -107,6 +118,10 @@ export class ProductRepository {
             order
         })
 
-        return products
+        return {
+            data:products, 
+            frete:frete, 
+            fromCache:false
+        } as IProductsReturn
     }
 }

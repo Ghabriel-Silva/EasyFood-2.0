@@ -33,12 +33,12 @@ class OrderControler {
             const dataFilter: FilterOrderSchema = req.body
             const payloud = await this.getCompanyFromRequest(req)
 
-            const result:Order[] = await this.OrdeService.filterOrder(dataFilter, payloud)
+            const result:Order[] | null = await this.OrdeService.filterOrder(dataFilter, payloud)
 
 
             res.status(200).json(
                 SuccessResponse(
-                    result,
+                    result ? result : [],
                     null,
                     undefined,
                     "fetch",
