@@ -10,6 +10,7 @@ import { toMoney } from "../../utils/money";
 import { Products } from "../../entity/Products";
 import { SetStatusSchemaOrder, setStatusSchemaOrder } from "../../validations/company/order/set-status";
 import { filterOrderSchema, FilterOrderSchema } from "../../validations/company/order/filter";
+import { invalidateCache } from "../../../cache/company/utils/invalidateCache";
 
 
 
@@ -101,6 +102,10 @@ class orderService {
                 throw new ErrorExtension(400, 'Erro ao salvar Pedido');
             }
 
+            if(dataOrder){
+                await invalidateCache(payloudCompany.id, 'products')
+            }
+
             return dataOrder;
 
         } catch (err) {
@@ -135,7 +140,7 @@ class orderService {
         }
     }
 
-    filterOrder = async (dataFilter: FilterOrderSchema, company: myJwtPayload): Promise<Order[]> => {
+    filterOrder = async (dataFilter: FilterOrderSchema, company: myJwtPayload): Promise<Order[] | null> => {
         try {
             if (!dataFilter.startDate && dataFilter.finalDate) {
                 throw new ErrorExtension(400, "Por favor, informe a data inicial ao definir uma data final.")
@@ -168,7 +173,7 @@ class orderService {
             const orderFilterResul = await this.orderRepository.filterOrder(company, validadeFilterOrder, filterDate)
 
             if (orderFilterResul === null) {
-                throw new ErrorExtension(404, "Nenhum pedido encontrado para esse filtro")
+               return null
             }
 
 

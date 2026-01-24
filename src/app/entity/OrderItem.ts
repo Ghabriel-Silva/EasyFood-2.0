@@ -11,7 +11,12 @@ export class OrderItem {
     @Column('varchar',  {nullable:true})
     name:string
     
-    @Column("int")
+    @Column({
+        type:'decimal',
+        precision:10, 
+        scale:3
+
+    })
     quantity: number
 
     @Column("decimal", { precision: 10, scale: 2 })

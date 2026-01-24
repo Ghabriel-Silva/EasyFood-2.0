@@ -1,14 +1,14 @@
 import { listSchema } from "../../app/validations/company/product/list";
 import client from "../redis-client";
 
-const SIX_HOURS = 6* 60 *60
+const CACHE_TTL_PRODUCTS = 5 * 60
 
 export const setCompanyFilterCache = async (
     userId: string,
     baseKey: string = 'products',
     value: any,
     filters: listSchema,
-    ttlSeconds = SIX_HOURS
+    ttlSeconds = CACHE_TTL_PRODUCTS
 ) => {
     const filterKey = Object.entries(filters)
         .map(([k, v]) => `${k}:${v}`)
@@ -20,8 +20,8 @@ export const setCompanyFilterCache = async (
 
 export const getFilterCompanyCache = async (
     userId: string,
-    filters: Record<string, string>, 
-    baseKey:string = 'products' 
+    filters: Record<string, string>,
+    baseKey: string = 'products'
 ) => {
     const filterKey = Object.entries(filters).map(([Key, value]) => `${Key}:${value}`).join('-')
     const cacheKey = `company:${userId}:${baseKey}:${filterKey}`

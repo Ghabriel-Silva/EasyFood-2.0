@@ -1,14 +1,15 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { SuccessResponse } from "../../utils/success-response";
 import { AdminService } from "../../service/admin/admin-service";
+import ErrorExtension from "../../utils/error-extension";
 
 
 class Admin {
     public router: Router
-    private adminsService: AdminService
+    private adminService: AdminService
     constructor() {
         this.router = Router()
-        this.adminsService = new AdminService()
+        this.adminService = new AdminService()
         this.inicializedRoutes()
     }
 
@@ -19,7 +20,9 @@ class Admin {
 
     private registerUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const user = await this.adminsService.register(req.body)
+            const user = await this.adminService.register(req.body)
+            
+
             const { password, ...safeUser } = user
 
             res.status(201).json(

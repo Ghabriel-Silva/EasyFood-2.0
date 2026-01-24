@@ -80,7 +80,6 @@ class orderRepository {
 
         } catch (error) {
             await queryRunner.rollbackTransaction();
-            console.error("Erro ao criar pedido com atualização de estoque:", error);
             throw error;
         } finally {
             await queryRunner.release()

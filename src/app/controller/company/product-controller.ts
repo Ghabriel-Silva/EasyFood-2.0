@@ -5,6 +5,7 @@ import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import { ErrorResponse, SuccessResponse } from "../../utils/success-response";
 import { listSchema } from "../../validations/company/product/list";
 import { setStatus } from "../../validations/company/product/set-status";
+import { IProductsReturn } from "../../interfaces/i-product/i-product";
 
 class ProductController {
     public router: Router
@@ -72,18 +73,31 @@ class ProductController {
             const payloud: myJwtPayload = this.getCompanyFromRequest(req)
             const filter: listSchema = req.query
 
-            const result = await this.productService.listProduct(payloud, filter)
+            const result: IProductsReturn | null = await this.productService.listProduct(payloud, filter)
 
             if (!result?.data || result.data.length === 0) {
-                return res.status(404).json(
-                    ErrorResponse('Nenhum produto encontrado!', 404)
+                return res.status(200).json(
+                    SuccessResponse(
+                        result?.data ?? [],
+                        false,
+                        'Nenhum produto encontrado'
+                    )
                 )
             }
 
-
             res.status(200).json(
-                SuccessResponse(result?.data, result?.fromCache, undefined, "fetch", "Produtos")
+                SuccessResponse(
+                    {
+                        products: result.data,
+                        frete: result.frete,
+                        fromCache: result.fromCache
+                    },
+                    undefined,
+                    "Produtos emcontrados com sucesso",
+                )
             )
+
+
 
         } catch (err) {
             next(err)

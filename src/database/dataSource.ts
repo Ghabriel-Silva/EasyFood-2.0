@@ -14,6 +14,8 @@ import { AddCollumOrderItem1762491862341 } from '../database/migrations/17624918
 import { AddColumnCategory1763381016818 } from '../database/migrations/1763381016818-AddColumnCategory'
 import { CreateCollunToOrder1765649217086 } from '../database/migrations/1765649217086-CreateCollunToOrder'
 import {CreateColumnsUniAndDeleivery1766270516114} from '../database/migrations/1766270516114-CreateColumnsUniAndDeleivery'
+import {CreateColumCategory1768401103923} from '../database/migrations/1768401103923-CreateColumCategory'
+import {AlterColunmQuantidadeItem1768663897382} from '../database/migrations/1768663897382-AlterColunmQuantidadeItem'
 
 
 
@@ -26,7 +28,7 @@ export const AppDataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     synchronize: false,
-    logging: false,
+    logging:false,
     entities: [Company, Category, Products, Order, OrderItem],
     migrations: [
         GenerateAllTables1760965347778,
@@ -34,7 +36,9 @@ export const AppDataSource = new DataSource({
         AddCollumOrderItem1762491862341,
         AddColumnCategory1763381016818,
         CreateCollunToOrder1765649217086, 
-        CreateColumnsUniAndDeleivery1766270516114 //Criando coluna de unidade de medida e delivery
+        CreateColumnsUniAndDeleivery1766270516114, //Criando coluna de unidade de medida e delivery
+        CreateColumCategory1768401103923, 
+        AlterColunmQuantidadeItem1768663897382
     ],
     subscribers: [],
 })

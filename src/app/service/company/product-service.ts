@@ -28,10 +28,10 @@ class ProductService {
 
 
             const product = await this.productRepository.createProduct(company, validateProduct)
-            
+
             if (!product) {
                 throw new ErrorExtension(404, "Produto não encontrado após salvar")
-                
+
             }
             await invalidateCache(company.id, 'products')
 
@@ -159,26 +159,35 @@ class ProductService {
                 abortEarly: false
             })
 
-            const cached = await getFilterCompanyCache(payloudCompany.id, statusReq, 'products')
+            const cached = await getFilterCompanyCache(
+                payloudCompany.id,
+                statusReq,
+                'products'
+            )
+
 
             if (cached) {
                 return {
-                    data: cached,
+                    ...cached,
                     fromCache: true
-                };
+                }
             }
-            const listStatusValue: Products[] = await this.productRepository.listProduct(statusReq, payloudCompany)
 
-            if (listStatusValue.length === 0) {
+            const result: IProductsReturn = await this.productRepository.listProduct(statusReq, payloudCompany)
+
+            if (result.data.length === 0) {
                 return null
             }
 
-            await setCompanyFilterCache(payloudCompany.id, 'products', listStatusValue, statusReq, 120)
-
-            return {
-                data: listStatusValue,
+            const response: IProductsReturn = {
+                data: result.data,
+                frete: result.frete,
                 fromCache: false
             }
+
+            await setCompanyFilterCache(payloudCompany.id, 'products', response, statusReq, 120)
+
+            return response
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {
