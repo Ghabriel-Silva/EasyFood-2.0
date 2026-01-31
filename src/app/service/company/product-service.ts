@@ -21,10 +21,10 @@ class ProductService {
     }
 
     createProduct = async (data: IProduct, company: myJwtPayload): Promise<IProductOutput> => {
-        try {
+        try {   
             const validateProduct: ProductSchema = await productCreateSchema.validate(data, {
                 abortEarly: false
-            })
+            })           
 
 
             const product = await this.productRepository.createProduct(company, validateProduct)

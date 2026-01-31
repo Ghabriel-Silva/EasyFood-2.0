@@ -15,7 +15,10 @@ export const productCreateSchema = yup.object({
     .notRequired(),
   uni_medida: yup
     .mixed<UniMedida>()
-    .oneOf(Object.values(UniMedida), "Unidade invalida, defina um valor: ['Pendente,Preparando,Completo,Entregue,Cancelado'] ")
+    .oneOf(
+      Object.values(UniMedida),
+      "Unidade inválida. Valores aceitos: un, kg, lt, porcao"
+    )
     .required("Unidade De medida é obrigatório"),
 
 

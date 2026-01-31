@@ -66,6 +66,8 @@ export class ProductRepository {
         return productWithRelations
     }
 
+
+
     async findByid(id: string, company: myJwtPayload): Promise<Products | null> {
         return await this.productRepository.findOne({
             where: {
@@ -115,13 +117,14 @@ export class ProductRepository {
 
         const products: Products[] = await this.productRepository.find({
             where,
-            order
+            order,
+            relations: ['category', 'company']
         })
 
         return {
-            data:products, 
-            frete:frete, 
-            fromCache:false
+            data: products,
+            frete: frete,
+            fromCache: false
         } as IProductsReturn
     }
 }

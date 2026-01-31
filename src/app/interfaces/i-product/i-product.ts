@@ -47,7 +47,7 @@ export interface IProductStatus {
 }
 
 export interface IProductsReturn {
-    data: IProduct[]
+    data: IProductOutput[]
     frete?:Company
     fromCache: boolean
 }
