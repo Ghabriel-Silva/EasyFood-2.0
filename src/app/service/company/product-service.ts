@@ -20,24 +20,20 @@ class ProductService {
         this.productRepository = new ProductRepository()
     }
 
-    createProduct = async (data: IProduct, company: myJwtPayload): Promise<IProductOutput> => {
+    createProduct = async (data: IProduct, company: myJwtPayload): Promise<boolean> => {
         try {   
             const validateProduct: ProductSchema = await productCreateSchema.validate(data, {
                 abortEarly: false
             })           
-
-
             const product = await this.productRepository.createProduct(company, validateProduct)
 
-            if (!product) {
-                throw new ErrorExtension(404, "Produto não encontrado após salvar")
-
+            if (product === false) {
+                throw new ErrorExtension(404, "Erro ao criar produto")
             }
             await invalidateCache(company.id, 'products')
 
-            const productOutput: IProductOutput = mapProductToOutput(product)
+            return true
 
-            return productOutput
 
         } catch (err) {
             if (err instanceof yup.ValidationError) {

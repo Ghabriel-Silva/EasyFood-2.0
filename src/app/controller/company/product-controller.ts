@@ -27,7 +27,7 @@ class ProductController {
     private createProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const user = this.getCompanyFromRequest(req)
-            const result:IProductOutput = await this.productService.createProduct(req.body, user)
+            const result = await this.productService.createProduct(req.body, user)
 
             res.status(200).json(
                 SuccessResponse(result, null, undefined, "create", "Produto")
@@ -84,7 +84,7 @@ class ProductController {
                     )
                 )
             }
-
+            
             res.status(200).json(
                 SuccessResponse(
                     {

@@ -10,7 +10,6 @@ export const productCreateSchema = yup.object({
     .required('O preço é obrigatório'),
   quantity: yup
     .number()
-    .integer('A quantidade deve ser um número inteiro')
     .min(0, 'A quantidade não pode ser negativa')
     .notRequired(),
   uni_medida: yup
