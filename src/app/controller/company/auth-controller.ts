@@ -26,7 +26,7 @@ class AuthUser {
             if (data) {
                 res.cookie("token", data.token, {
                     httpOnly: true,
-                    secure: false, // DEVE estar true em produção (https)
+                    secure: false, // DEVE estar true em produção 
                     sameSite: "lax",
                     maxAge: 3600000, // 1 hora
                 });

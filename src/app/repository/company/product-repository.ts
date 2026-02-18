@@ -5,6 +5,7 @@ import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import { IProduct, IProductsReturn, IProductStatus } from "../../interfaces/i-product/i-product";
 import { listSchema } from "../../validations/company/product/list";
 import { Company } from "../../entity/Company";
+import { Category } from "../../entity/Category";
 
 
 
@@ -17,7 +18,7 @@ export class ProductRepository {
 
 
 
-    async createProduct(user: myJwtPayload, data: IProduct): Promise<Products | null> {
+    async createProduct(user: myJwtPayload, data: IProduct): Promise<boolean> {
         const newProduct = this.productRepository.create({
             name: data.name,
             price: data.price,
@@ -30,14 +31,22 @@ export class ProductRepository {
             category: data.category_id ? { id: data.category_id } : undefined,
         }) //?? undefined garante que, se o valor for null ou undefined, o campo será omitido, que é exatamente o que o TypeORM espera
 
-        await this.productRepository.save(newProduct)
+        const categoryExist = await AppDataSource
+            .getRepository(Category)
+            .createQueryBuilder('category')
+            .where("category.id = :category", { category: newProduct.category.id })
+            .andWhere("company_id = :id", { id: newProduct.company.id })
+            .getExists()
+    
+        if (!categoryExist) {
+            return false
+        }
 
-        const productWithRelations = await this.productRepository.findOne({
-            where: { id: newProduct.id },
-            relations: ['company', 'category']
-        })
+        const createProducts = await this.productRepository.save(newProduct)
 
-        return productWithRelations
+        if (createProducts) return true
+
+        return false
     }
 
 
@@ -65,6 +74,8 @@ export class ProductRepository {
         })
         return productWithRelations
     }
+
+
 
     async findByid(id: string, company: myJwtPayload): Promise<Products | null> {
         return await this.productRepository.findOne({
@@ -115,13 +126,14 @@ export class ProductRepository {
 
         const products: Products[] = await this.productRepository.find({
             where,
-            order
+            order,
+            relations: ['category', 'company']
         })
 
         return {
-            data:products, 
-            frete:frete, 
-            fromCache:false
+            data: products,
+            frete: frete,
+            fromCache: false
         } as IProductsReturn
     }
 }

@@ -5,7 +5,7 @@ import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import { ErrorResponse, SuccessResponse } from "../../utils/success-response";
 import { listSchema } from "../../validations/company/product/list";
 import { setStatus } from "../../validations/company/product/set-status";
-import { IProductsReturn } from "../../interfaces/i-product/i-product";
+import { IProductOutput, IProductsReturn } from "../../interfaces/i-product/i-product";
 
 class ProductController {
     public router: Router
@@ -84,7 +84,7 @@ class ProductController {
                     )
                 )
             }
-
+            
             res.status(200).json(
                 SuccessResponse(
                     {

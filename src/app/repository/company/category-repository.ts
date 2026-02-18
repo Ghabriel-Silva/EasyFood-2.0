@@ -22,8 +22,7 @@ class categoryRepository {
         status: true,
         company: { id: company.id }
       })
-      console.log(categoryMolde)
-
+      
       await this.categoryRepo.save(categoryMolde)
 
 
