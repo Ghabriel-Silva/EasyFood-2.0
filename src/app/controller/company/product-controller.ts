@@ -2,7 +2,7 @@ import { Response, Request, NextFunction, Router } from "express";
 import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
 import ProductService from "../../service/company/product-service";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
-import { ErrorResponse, SuccessResponse } from "../../utils/success-response";
+import {  SuccessResponse } from "../../utils/success-response";
 import { listSchema } from "../../validations/company/product/list";
 import { setStatus } from "../../validations/company/product/set-status";
 import { IProductOutput, IProductsReturn } from "../../interfaces/i-product/i-product";
@@ -49,7 +49,6 @@ class ProductController {
             next(err)
         }
     }
-
 
     private setStatusProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {

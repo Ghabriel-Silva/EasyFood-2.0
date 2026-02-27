@@ -5,7 +5,7 @@ export interface IProduct {
     name: string;
     price: number;
     quantity?: number | null;
-    expirationDate?: Date | null;
+    expirationDate?: string | null;
     description?: string | null;
     category_id: string;
     uni_medida?: UniMedida
@@ -17,7 +17,7 @@ export interface IProductOutput {
     name: string;
     price: number;
     quantity?: number | null;
-    expirationDate?: Date | null;
+    expirationDate?:string | null;
     isAvailable: boolean;
     description?: string | null;
     created_at: Date;

@@ -21,7 +21,7 @@ export const productCreateSchema = yup.object({
     .required("Unidade De medida é obrigatório"),
 
 
-  expirationDate: yup.date().typeError('Data inválida').notRequired(),
+  expirationDate: yup.string().typeError('Data inválida').notRequired(),
   description: yup.string().notRequired(),
   category_id: yup.string().required('Categoria é obrigatório'),
 });

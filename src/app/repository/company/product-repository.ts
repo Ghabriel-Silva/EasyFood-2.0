@@ -30,7 +30,6 @@ export class ProductRepository {
             company: { id: user.id },
             category: data.category_id ? { id: data.category_id } : undefined,
         }) //?? undefined garante que, se o valor for null ou undefined, o campo será omitido, que é exatamente o que o TypeORM espera
-
         const categoryExist = await AppDataSource
             .getRepository(Category)
             .createQueryBuilder('category')
@@ -115,7 +114,6 @@ export class ProductRepository {
         const order: Record<string, 'ASC' | 'DESC'> = {}
         const where: any = {
             company: { id: company.id }
-
         }
 
         if (filters.price === 'maior') order.price = 'DESC'

@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { UniMedida } from '../../../entity/Products';
 
 export const productUpdateSchema = yup.object({
   name: yup.string().notRequired(),
@@ -9,11 +10,16 @@ export const productUpdateSchema = yup.object({
     .notRequired(),
   quantity: yup
     .number()
-    .typeError('A quantidade deve ser um número') 
-    .integer('A quantidade deve ser um número inteiro')
     .min(0, 'A quantidade não pode ser negativa')
     .notRequired(),
-  expirationDate: yup.date().typeError('Data inválida').notRequired(),
+  uni_medida: yup
+    .mixed<UniMedida>()
+    .oneOf(
+      Object.values(UniMedida),
+      "Unidade inválida. Valores aceitos: un, kg, lt, porcao"
+    )
+    .notRequired(),
+  expirationDate: yup.string().typeError('Data inválida').notRequired(),
   description: yup.string().notRequired(),
   category_id: yup.string().notRequired(),
 });

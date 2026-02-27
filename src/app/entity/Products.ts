@@ -27,11 +27,14 @@ export class Products {
     @Column("decimal", { precision: 10, scale: 2 })
     price: number;
 
-    @Column("int", { nullable: true })
+    @Column("decimal", { precision: 12, scale: 3, nullable: true })
     quantity: number | null;
 
-    @Column({ type: "date", nullable: true })
-    expirationDate?: Date;
+    @Column({
+        type: 'date',
+        nullable: true
+    })
+    expirationDate?: string;
 
     @Column({ default: true })
     isAvailable: boolean;
@@ -47,7 +50,7 @@ export class Products {
         enum: UniMedida,
         default: UniMedida.NONE
     })
-    uni_medida:UniMedida
+    uni_medida: UniMedida
 
     @ManyToOne(() => Company, company => company.products)
     @JoinColumn({ name: "company_id" })
