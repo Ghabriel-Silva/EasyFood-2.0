@@ -2,7 +2,7 @@ import { IProduct, IProductOutput, IProductsReturn, IProductStatus, IProductUpda
 import { ProductRepository } from "../../repository/company/product-repository";
 import * as yup from "yup";
 import ErrorExtension from "../../utils/error-extension";
-import { productCreateSchema, ProductSchema } from "../../validations/company/product/create";
+
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import { productUpdateSchema, ProductUpdateSchema } from "../../validations/company/product/update";
 import { mapProductToOutput } from "../../utils/products/products";
@@ -11,6 +11,7 @@ import { listSchema, listSchemaProducts } from "../../validations/company/produc
 import { setStatus, setStatusSchema } from "../../validations/company/product/set-status";
 import { getFilterCompanyCache, setCompanyFilterCache } from "../../../cache/company/products-cache"
 import { invalidateCache } from "../../../cache/company/utils/invalidateCache";
+import { productCreateSchema, ProductSchema } from "../../validations/company/product/Create";
 
 
 class ProductService {
@@ -22,7 +23,7 @@ class ProductService {
 
     createProduct = async (data: IProduct, company: myJwtPayload): Promise<boolean> => {
         try {   
-            const validateProduct: ProductSchema = await productCreateSchema.validate(data, {
+            const validateProduct: ProductSchema= await productCreateSchema.validate(data, {
                 abortEarly: false
             })           
             const product = await this.productRepository.createProduct(company, validateProduct)
@@ -87,7 +88,10 @@ class ProductService {
                 }
                 if (value !== currentValue) fieldsToUpdate[chave] = value
             }
+
+            
             if (Object.keys(fieldsToUpdate).length === 0) throw new ErrorExtension(400, "Nenhum campo de atualização enviado")
+
             const productUpdate = await this.productRepository.updateProduct(id, payloudCompany, fieldsToUpdate)
 
             if (!productUpdate) {
@@ -168,6 +172,7 @@ class ProductService {
                     fromCache: true
                 }
             }
+            
 
             const result: IProductsReturn = await this.productRepository.listProduct(statusReq, payloudCompany)
 
@@ -182,9 +187,7 @@ class ProductService {
             }
 
             await setCompanyFilterCache(payloudCompany.id, 'products', response, statusReq, 120)
-
             return response
-
         } catch (err) {
             if (err instanceof yup.ValidationError) {
                 throw new ErrorExtension(400, err.errors.join(","))

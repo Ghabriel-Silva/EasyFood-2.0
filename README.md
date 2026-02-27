@@ -1,4 +1,4 @@
-# 🍽️ Restaurant Management API — Orders & Inventory
+#  Restaurant Management API — Orders & Inventory
 
 API REST robusta para gestão operacional de restaurantes, focada em controle interno de pedidos, produtos, estoque e configurações administrativas.
 
@@ -8,7 +8,7 @@ O sistema suporta **múltiplas empresas (multi-tenant)**, permitindo que diferen
 
 ---
 
-## 🧠 Overview
+##  Overview
 
 Esta API foi desenvolvida com foco em cenários reais de negócio, indo além de um CRUD básico.
 
