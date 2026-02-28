@@ -2,10 +2,11 @@ import { Response, Request, NextFunction, Router } from "express";
 import AuthenticateMidlleware from "../../middlewares/auth-midlleware";
 import ProductService from "../../service/company/product-service";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
-import {  SuccessResponse } from "../../utils/success-response";
-import { listSchema } from "../../validations/company/product/list";
+import { SuccessResponse } from "../../utils/success-response";
+import { listSchema, listSchemaProducts } from "../../validations/company/product/list";
 import { setStatus } from "../../validations/company/product/set-status";
 import { IProductOutput, IProductsReturn } from "../../interfaces/i-product/i-product";
+import { Schema } from "yup";
 
 class ProductController {
     public router: Router
@@ -70,7 +71,8 @@ class ProductController {
     private listProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const payloud: myJwtPayload = this.getCompanyFromRequest(req)
-            const filter: listSchema = req.query
+
+            const filter = req.query
 
             const result: IProductsReturn | null = await this.productService.listProduct(payloud, filter)
 
@@ -83,16 +85,21 @@ class ProductController {
                     )
                 )
             }
-            
+
             res.status(200).json(
                 SuccessResponse(
                     {
                         products: result.data,
                         frete: result.frete,
-                        fromCache: result.fromCache
+                        fromCache: result.fromCache,
+                        page: result.page,
+                        limit: result.limit,
+                        total: result.total,
+                        totalPages: result.totalPages,
+
                     },
                     undefined,
-                    "Produtos emcontrados com sucesso",
+                    "Produtos encontrados com sucesso",
                 )
             )
 

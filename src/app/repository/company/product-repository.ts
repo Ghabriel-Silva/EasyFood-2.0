@@ -36,7 +36,7 @@ export class ProductRepository {
             .where("category.id = :category", { category: newProduct.category.id })
             .andWhere("company_id = :id", { id: newProduct.company.id })
             .getExists()
-    
+
         if (!categoryExist) {
             return false
         }
@@ -110,6 +110,9 @@ export class ProductRepository {
 
     async listProduct(filters: listSchema, company: myJwtPayload): Promise<IProductsReturn> {
         const frete: Company | null = await this.getCompanyFrete(company)
+        const page = filters.page;
+        const limit = filters.limit;
+
 
         const order: Record<string, 'ASC' | 'DESC'> = {}
         const where: any = {
@@ -122,16 +125,25 @@ export class ProductRepository {
         if (filters.status === 'active') where.isAvailable = true
         else if (filters.status === 'desactivated') where.isAvailable = false
 
-        const products: Products[] = await this.productRepository.find({
+
+        const [products, total] = await this.productRepository.findAndCount({
             where,
+            skip: (page - 1) * limit,
+            take: limit,
             order,
             relations: ['category', 'company']
         })
+        const totalPages = Math.ceil(total / limit);
+        
 
         return {
             data: products,
             frete: frete,
-            fromCache: false
+            fromCache: false,
+            page,
+            limit,
+            total,
+            totalPages
         } as IProductsReturn
     }
 }

@@ -12,15 +12,16 @@ export const setCompanyFilterCache = async (
 ) => {
     const filterKey = Object.entries(filters)
         .map(([k, v]) => `${k}:${v}`)
-        .join('-') //["status:active", "price:maior"] → "status:active-price:maior"
+        .join('-') //["status:active", "price:maior"] → "status:active-price:maior-page:1-limit:10"
 
     const cacheKey = `company:${userId}:${baseKey}:${filterKey}` //"company:123:products:status:active|price:maior" 
     await client.set(cacheKey, JSON.stringify(value), { EX: ttlSeconds })
 }
 
+
 export const getFilterCompanyCache = async (
     userId: string,
-    filters: Record<string, string>,
+    filters: Record<string , string | number>, 
     baseKey: string = 'products'
 ) => {
     const filterKey = Object.entries(filters).map(([Key, value]) => `${Key}:${value}`).join('-')
