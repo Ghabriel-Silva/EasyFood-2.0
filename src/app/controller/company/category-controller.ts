@@ -94,21 +94,24 @@ class categoryController {
 
 
     private getCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        const  status:SetStatusSchemaValidation  = req.query 
-        console.log(status)
-        const company = this.getcompanyFromRequest(req)
+        try {
+            const status: SetStatusSchemaValidation = req.query
+            const company = this.getcompanyFromRequest(req)
 
 
-        const result = await this.categoryService.getCategory(status, company)
-        res.status(200).json(
-            SuccessResponse(
-                result,
-                null,
-                undefined,
-                "fetch",
-                "Status "
+            const result = await this.categoryService.getCategory(status, company)
+            res.status(200).json(
+                SuccessResponse(
+                    result,
+                    null,
+                    undefined,
+                    "fetch",
+                    "Status "
+                )
             )
-        )
+        } catch (err) {
+            next(err)
+        }
     }
 
     private getcompanyFromRequest(req: Request): myJwtPayload {

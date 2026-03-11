@@ -17,7 +17,7 @@ export interface IProductOutput {
     name: string;
     price: number;
     quantity?: number | null;
-    expirationDate?:string | null;
+    expirationDate?: string | null;
     isAvailable: boolean;
     description?: string | null;
     created_at: Date;
@@ -48,8 +48,12 @@ export interface IProductStatus {
 
 export interface IProductsReturn {
     data: IProductOutput[]
-    frete?:Company
-    fromCache: boolean
+    frete?: Company
+    fromCache: boolean,
+    page: number,
+    limit:number,
+    total: number,
+    totalPages:number ,
 }
 
 
