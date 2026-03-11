@@ -24,13 +24,13 @@ export const listSchemaProducts = yup.object({
     limit: yup
         .number()
         .transform((_, value) => {
-            const n = Number(value);
-            return isNaN(n) ? 10 : n;
+            if (value === undefined) return undefined
+            const n = Number(value)
+            return isNaN(n) ? undefined : n
         })
         .integer()
         .min(1)
-        .max(100)
-        .default(10),
+        .max(200)
 })
 
 export type listSchema = yup.InferType<typeof listSchemaProducts>

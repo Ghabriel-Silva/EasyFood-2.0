@@ -114,7 +114,9 @@ export class ProductRepository {
         const limit = filters.limit;
 
 
-        const order: Record<string, 'ASC' | 'DESC'> = {}
+        const order: Record<string, 'ASC' | 'DESC'> = {
+            created_at: 'DESC'
+        }
         const where: any = {
             company: { id: company.id }
         }
@@ -126,15 +128,18 @@ export class ProductRepository {
         else if (filters.status === 'desactivated') where.isAvailable = false
 
 
+
         const [products, total] = await this.productRepository.findAndCount({
             where,
-            skip: (page - 1) * limit,
-            take: limit,
+            skip: limit ? (page - 1) * limit : undefined,
+            take: limit || undefined,
             order,
+
             relations: ['category', 'company']
         })
-        const totalPages = Math.ceil(total / limit);
-        
+
+        const totalPages = limit ? Math.ceil(total / limit) : 1;
+
 
         return {
             data: products,

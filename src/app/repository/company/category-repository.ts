@@ -22,7 +22,7 @@ class categoryRepository {
         status: true,
         company: { id: company.id }
       })
-      
+
       await this.categoryRepo.save(categoryMolde)
 
 
@@ -75,12 +75,18 @@ class categoryRepository {
 
 
   getStatus = async (status: boolean | undefined, company: myJwtPayload) => {
-    return await this.categoryRepo.find({
-      where: status !== undefined
-        ? { status, company: { id: company.id } } 
-        : { company: { id: company.id } }        
-    });
+    const where: any = {
+      company: { id: company.id }
+    }
 
+    if (status !== undefined) {
+      where.status = status
+    }
+
+    return this.categoryRepo.find({
+      where,
+      order: { created_at: "DESC" }
+    })
   }
 }
 
