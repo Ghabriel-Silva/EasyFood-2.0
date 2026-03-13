@@ -1,5 +1,4 @@
 import { Router, Response, Request, NextFunction } from "express";
-import { Repository } from "typeorm";
 import configService from "../../service/company/config-service";
 import { myJwtPayload } from "../../interfaces/i-auth/i-auth";
 import { SuccessResponse } from "../../utils/success-response";
@@ -17,18 +16,34 @@ class configController {
     }
 
     inicializedRoutes() {
-        this.router.get('/')
+        this.router.get('/', AuthenticateMidlleware, this.GetDataCompany)
         this.router.patch('/', AuthenticateMidlleware, this.UpdateInfoCompany)
 
     }
 
-    
+    private GetDataCompany = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const company: myJwtPayload = this.getCompanyFromRequest(req)
+            const result  = await this.configCompanyService.getInfoCompany(company)
+            res.status(200).json(
+                SuccessResponse(
+                    result,
+                    null,
+                    undefined,
+                    "fetch",
+                    "Dados Compania"
+                )
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
 
     private UpdateInfoCompany = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const company = this.getCompanyFromRequest(req)
             const result = await this.configCompanyService.UpdateInfoCompany(req.body, company)
-           
+
             res.status(200).json(
                 SuccessResponse(
                     result,
