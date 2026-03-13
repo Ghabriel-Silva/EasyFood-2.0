@@ -22,6 +22,13 @@ export class Company {
     @Column('varchar', { length: 100, nullable: false })
     name: string;
 
+    @Column('varchar', { length: 60, nullable: true })
+    customerAddress: string;
+
+    @Column({ length: 20, nullable: true })
+    customerPhone?: string;
+
+    
     @Column({
         type: "enum",
         enum: enunRole,

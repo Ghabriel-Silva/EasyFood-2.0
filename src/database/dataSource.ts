@@ -17,6 +17,7 @@ import { CreateColumnsUniAndDeleivery1766270516114 } from '../database/migration
 import { CreateColumCategory1768401103923 } from '../database/migrations/1768401103923-CreateColumCategory'
 import { AlterColunmQuantidadeItem1768663897382 } from '../database/migrations/1768663897382-AlterColunmQuantidadeItem'
 import {AlterColunmQuantity1772232083432 } from '../database/migrations/1772232083432-AlterColunmQuantity'
+import { AddColunmToCompany1773409963988} from '../database/migrations/1773409963988-AddColunmToCompany'
 
 
 
@@ -40,7 +41,8 @@ export const AppDataSource = new DataSource({
         CreateColumnsUniAndDeleivery1766270516114, //Criando coluna de unidade de medida e delivery
         CreateColumCategory1768401103923,
         AlterColunmQuantidadeItem1768663897382, 
-        AlterColunmQuantity1772232083432 //ALtera o valor aceitado na coluna quantidade para decimal
+        AlterColunmQuantity1772232083432, //ALtera o valor aceitado na coluna quantidade para decimal
+         AddColunmToCompany1773409963988 //Add coluna telefone e endereço 
     ],
     subscribers: [],
 })
